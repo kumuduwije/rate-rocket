@@ -53,6 +53,8 @@ export default function MainPage() {
     const [displayTargetAmount, setDisplayTargetAmount] = useState('');
     const [displayToCurrency, setDisplayToCurrency] = useState('');
 
+    const [input, setInput] = useState("");
+
     // handleSubmit
     const handleSubmit =async (e) =>{
           e.preventDefault() 
@@ -101,18 +103,45 @@ export default function MainPage() {
  
     }
     //Get currency names from api
-    useEffect(() => {
-        const getCurrencyNames = async() =>{
-            try{
-                const response = await axios.get("http://localhost:5000/getAllCurrencies");
-                setCurrencyNames(response.data)
-               console.log(response.data)
-            }catch(err){
-                console.error(err);
-            }
-        }
-        getCurrencyNames();
-    }, [])
+    // useEffect(() => {
+    //     const getCurrencyNames = async() =>{
+    //         try{
+    //             const response = await axios.get("http://localhost:5000/getAllCurrencies");
+    //             setCurrencyNames(response.data)
+    //            console.log(response.data)
+    //         }catch(err){
+    //             console.error(err);
+    //         }
+    //     }
+    //     getCurrencyNames().then(r => {});
+    // }, [])
+
+    const fetchData = (value) => {
+        fetch("http://localhost:5000/getAllCurrencies")
+            .then((response) => response.json())
+            .then((json) => {
+                // Convert the object to an array of key-value pairs
+                const currenciesArray = Object.entries(json);
+
+                // Filter the array based on the currency name (value)
+                const result = currenciesArray.filter(([currencyCode, currencyName]) => {
+                    return value && currencyName.toLowerCase().includes(value.toLowerCase());
+                });
+
+                console.log(result);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+    };
+
+
+
+
+    const handleChange = (value) =>{
+            setInput(value)
+        fetchData(value)
+    }
 
     const handleButtonClick = () => {
        setDisplaySrcAmount(amountInSourceCurrency)
@@ -142,30 +171,42 @@ export default function MainPage() {
                              style={{ appearance: "none" }} // Add the appearance property here
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required />
                         </div>
-
+                        {/*Source Currency*/}
                         <div className="mb-4">
-                            <label
-                                htmlFor={sourceCurrency}
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source Currency:
-                            </label>
+                           {/* <label*/}
+                           {/*     htmlFor={sourceCurrency}*/}
+                           {/*     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source Currency:*/}
+                           {/* </label>*/}
                            
-                            <select 
-                            onChange={(e)=>setSourceCurrency(e.target.value)} 
-                            id={sourceCurrency} 
-                            name={sourceCurrency} 
-                            value={sourceCurrency}
-                   
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" required placeholder="Source Currency:">
-                            
-                            <option value="Select source currency">Select source currency</option>
-                           
-                           {Object.keys(currencyNames).map((currency) =>
-                            <option className="p-1" key={currency} value={currency}>
-                                {currencyNames[currency]}
-                            </option>
-                           )}
+                           {/* <select */}
+                           {/* onChange={(e)=>setSourceCurrency(e.target.value)} */}
+                           {/* id={sourceCurrency} */}
+                           {/* name={sourceCurrency} */}
+                           {/* value={sourceCurrency}*/}
 
-                            </select>
+                           {/* className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" required placeholder="Source Currency:">*/}
+                           {/* */}
+                           {/* <option value="Select source currency">Select source currency</option>*/}
+                           
+                           {/*{Object.keys(currencyNames).map((currency) =>*/}
+                           {/* <option className="p-1" key={currency} value={currency}>*/}
+                           {/*     {currencyNames[currency]}*/}
+                           {/* </option>*/}
+                           {/*)}*/}
+
+                           {/* </select>*/}
+
+                            <label htmlFor={sourceCurrency}
+                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source</label>
+                            <input
+                                id={sourceCurrency}
+                                name={sourceCurrency}
+                                value={input}
+                                onChange={(e)=>handleChange(e.target.value)}
+                                type="text"
+                                   placeholder="Type to Search Currencies"
+                                   className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+
                         </div>
 
                         <div className="mb-4">
