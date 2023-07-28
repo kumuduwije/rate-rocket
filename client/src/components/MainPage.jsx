@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react'
 import axios from "axios"
 import SyncIcon from '@mui/icons-material/Sync';
 import { styled } from '@mui/system';
+import Results from "./Results";
 
 const RotateIcon = styled(SyncIcon)`
   display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
@@ -54,6 +55,7 @@ export default function MainPage() {
     const [displayToCurrency, setDisplayToCurrency] = useState('');
 
     const [input, setInput] = useState("");
+    const [searchResult, setSearchResult] = useState([])
 
     // handleSubmit
     const handleSubmit =async (e) =>{
@@ -128,6 +130,7 @@ export default function MainPage() {
                     return value && currencyName.toLowerCase().includes(value.toLowerCase());
                 });
 
+                setSearchResult(result)
                 console.log(result);
             })
             .catch((error) => {
@@ -197,7 +200,7 @@ export default function MainPage() {
                            {/* </select>*/}
 
                             <label htmlFor={sourceCurrency}
-                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source</label>
+                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source Currency:</label>
                             <input
                                 id={sourceCurrency}
                                 name={sourceCurrency}
@@ -208,6 +211,8 @@ export default function MainPage() {
                                    className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
 
                         </div>
+
+                        <Results input = {input} searchResult={searchResult} setSearchResult={setSearchResult}/>
 
                         <div className="mb-4">
                             <label
