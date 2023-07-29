@@ -54,8 +54,11 @@ export default function MainPage() {
     const [displayTargetAmount, setDisplayTargetAmount] = useState('');
     const [displayToCurrency, setDisplayToCurrency] = useState('');
 
-    const [input, setInput] = useState("");
-    const [searchResult, setSearchResult] = useState([])
+    const [sourceInput, setSourceInput] = useState("");
+    const [sourceSearchResult, setSourceSearchResult] = useState([])
+
+    const [targetInput, setTargetInput] = useState("");
+    const [targetSearchResult, setTargetSearchResult] = useState([])
 
     // handleSubmit
     const handleSubmit =async (e) =>{
@@ -118,7 +121,7 @@ export default function MainPage() {
     //     getCurrencyNames().then(r => {});
     // }, [])
 
-    const fetchData = (value) => {
+    const fetchData = (value, field) => {
         fetch("http://localhost:5000/getAllCurrencies")
             .then((response) => response.json())
             .then((json) => {
@@ -130,8 +133,16 @@ export default function MainPage() {
                     return value && currencyName.toLowerCase().includes(value.toLowerCase());
                 });
 
-                setSearchResult(result)
-                console.log(result);
+                if(field === "src"){
+                    setSourceSearchResult(result)
+                    console.log("source result:"+ result);
+                }
+                else if (field === "target"){
+                    setTargetSearchResult(result)
+                    console.log("target result:"+ result);
+                }
+
+
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
@@ -141,9 +152,19 @@ export default function MainPage() {
 
 
 
-    const handleChange = (value) =>{
-            setInput(value)
-        fetchData(value)
+    const handleChange = (value, src) =>{
+        if(src === "source"){
+            console.log("source:"+ value)
+            setSourceInput(value)
+            fetchData(value,"src")
+        }
+        else if(src === "target"){
+            console.log("target:"+ value)
+            setTargetInput(value)
+            fetchData(value,"target")
+        }
+
+
     }
 
     const handleButtonClick = () => {
@@ -204,36 +225,31 @@ export default function MainPage() {
                             <input
                                 id={sourceCurrency}
                                 name={sourceCurrency}
-                                value={input}
-                                onChange={(e)=>handleChange(e.target.value)}
+                                value={sourceInput}
+                                onChange={(e)=>handleChange(e.target.value, "source")}
                                 type="text"
-                                   placeholder="Type to Search Currencies"
-                                   className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+                                   placeholder="Type source currency name: "
+                                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"></input>
 
                         </div>
 
-                        <Results input = {input} searchResult={searchResult} setSearchResult={setSearchResult}/>
+                        <Results input = {sourceInput} sourceSearchResult={sourceSearchResult} SearchResult={setSourceSearchResult} setInput ={setSourceInput}/>
 
                         <div className="mb-4">
-                            <label
-                                htmlFor={targetCurrency} name={targetCurrency}
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Target Currency:</label>
-                            <select onChange={(e)=>setTargetCurrency(e.target.value)} 
-                              id={targetCurrency} 
-                              name={targetCurrency} 
-                              value={targetCurrency}
-                              
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Target Currency:">
-                                <option value="Select target currency">Select target currency</option>
-                                
-                                {Object.keys(currencyNames).map((currency) =>
-                            <option className="p-1" key={currency} value={currency}>
-                                {currencyNames[currency]}
-                            </option>
-                           )}
-                            
-                            </select>
+
+                            <label htmlFor={targetCurrency}
+                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Target Currency:</label>
+                            <input
+                                id={targetCurrency}
+                                name={targetCurrency}
+                                value={targetInput}
+                                onChange={(e)=>handleChange(e.target.value, "target")}
+                                type="text"
+                                placeholder="Type target currency name: "
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"></input>
+
                         </div>
+                        {/*<Results targetinput = {targetInput} targetSearchResult={targetSearchResult} setSearchResult={setTargetSearchResult} setInput ={setTargetInput} target={true}/>*/}
 
                         <div className="mb-4">
                             <label
