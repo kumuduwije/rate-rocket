@@ -1,9 +1,24 @@
 import React, {useEffect, useState} from 'react';
 
-export default function Results({sourceSearchResult, input, setInput }) {
+export default function Results({sourceSearchResult, sourceInput,setSourceInput, targetInput, targetSearchResult, setTargetInput, target,setSourceCurrency,setTargetCurrency}) {
     const [isClicked, setIsClicked] = useState(false);
 
-    let searchResult = sourceSearchResult
+    let input;
+    let setInput;
+    let searchResult;
+    let setCurrency;
+
+    if(!target){
+         input =sourceInput;
+         setInput = setSourceInput
+         searchResult = sourceSearchResult
+        setCurrency = setSourceCurrency
+    }else{
+        input =targetInput;
+        setInput = setTargetInput
+        searchResult = targetSearchResult
+        setCurrency = setTargetCurrency
+    }
 
 
     useEffect(() => {
@@ -13,6 +28,7 @@ export default function Results({sourceSearchResult, input, setInput }) {
     const handleValue = (index) => {
         //console.log(searchResult[index][1]);
         setInput(searchResult[index][1]);
+        setCurrency(searchResult[index][1])
         setIsClicked(!isClicked); // Toggle the state to indicate the click event occurred
     };
 

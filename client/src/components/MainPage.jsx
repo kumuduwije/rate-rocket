@@ -84,12 +84,14 @@ export default function MainPage() {
                 amountInSourceCurrency
                 }
             })
-            
+
+            console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
+            console.log("convertCurrencies response"+response.data)
             
         
             setIsloading(false)
             setIconLoading(false)
-            setAmountInTargetCurrency(response.data)
+            setAmountInTargetCurrency(response.data.toFixed(2));
             setDisplayTargetAmount(response.data.toFixed(2));
             setShowResult(true)
             setButtonText("Convert Currency")
@@ -168,12 +170,17 @@ export default function MainPage() {
     }
 
     const handleButtonClick = () => {
-       setDisplaySrcAmount(amountInSourceCurrency)
-       setDisplayFromCurrency(currencyNames[sourceCurrency])
-       setDisplayTargetAmount(amountInTargetCurrency.toFixed(2))
-       setDisplayToCurrency(currencyNames[targetCurrency])
+       // setDisplaySrcAmount(amountInSourceCurrency)
+       // setDisplayFromCurrency(currencyNames[sourceCurrency])
+       // setDisplayTargetAmount(amountInTargetCurrency.toFixed(2))
+       // setDisplayToCurrency(currencyNames[targetCurrency])
 
-       
+        setDisplaySrcAmount(amountInSourceCurrency)
+        setDisplayFromCurrency(sourceCurrency)
+        setDisplayTargetAmount(amountInTargetCurrency.toFixed(2))
+        setDisplayToCurrency(targetCurrency)
+
+
       };
 
     return (
@@ -233,7 +240,7 @@ export default function MainPage() {
 
                         </div>
 
-                        <Results input = {sourceInput} sourceSearchResult={sourceSearchResult} SearchResult={setSourceSearchResult} setInput ={setSourceInput}/>
+                        <Results sourceInput = {sourceInput} sourceSearchResult={sourceSearchResult}  setSourceInput ={setSourceInput} target={false} setSourceCurrency={setSourceCurrency}/>
 
                         <div className="mb-4">
 
@@ -249,7 +256,7 @@ export default function MainPage() {
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"></input>
 
                         </div>
-                        {/*<Results targetinput = {targetInput} targetSearchResult={targetSearchResult} setSearchResult={setTargetSearchResult} setInput ={setTargetInput} target={true}/>*/}
+                        <Results targetInput = {targetInput} targetSearchResult={targetSearchResult} setTargetSearchResult={setTargetSearchResult} setTargetInput ={setTargetInput} target={true} setTargetCurrency={setTargetCurrency}/>
 
                         <div className="mb-4">
                             <label
