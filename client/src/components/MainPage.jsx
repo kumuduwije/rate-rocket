@@ -177,7 +177,7 @@ export default function MainPage() {
 
         setDisplaySrcAmount(amountInSourceCurrency)
         setDisplayFromCurrency(sourceCurrency)
-        setDisplayTargetAmount(amountInTargetCurrency.toFixed(2))
+        setDisplayTargetAmount(amountInTargetCurrency)
         setDisplayToCurrency(targetCurrency)
 
 

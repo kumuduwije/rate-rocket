@@ -43,7 +43,7 @@ app.get("/convertCurrencies",async (req,res)=>{
         const sourceRate = rates[sourceCurrency]
         const targetRate = rates[targetCurrency]
 
-        console.log(sourceRate)
+
 
         //Formula 
         const targetAmount = (targetRate/sourceRate) * amountInSourceCurrency

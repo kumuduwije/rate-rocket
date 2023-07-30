@@ -28,7 +28,7 @@ export default function Results({sourceSearchResult, sourceInput,setSourceInput,
     const handleValue = (index) => {
         //console.log(searchResult[index][1]);
         setInput(searchResult[index][1]);
-        setCurrency(searchResult[index][1])
+        setCurrency(searchResult[index][0])
         setIsClicked(!isClicked); // Toggle the state to indicate the click event occurred
     };
 
