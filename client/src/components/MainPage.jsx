@@ -1,5 +1,5 @@
 
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import axios from "axios"
 import SyncIcon from '@mui/icons-material/Sync';
 import { styled } from '@mui/system';
@@ -43,7 +43,7 @@ export default function MainPage() {
     const [targetCurrency, setTargetCurrency] = useState("");
     const [amountInSourceCurrency, setAmountInSourceCurrency] = useState(0);
     const [amountInTargetCurrency, setAmountInTargetCurrency] = useState(0);
-    const [currencyNames, setCurrencyNames] = useState([])
+    // const [currencyNames, setCurrencyNames] = useState([])
     const [isloading, setIsloading] = useState(true)
     const [buttonText, setButtonText] = useState("Convert Currency")
     const [iconLoading, setIconLoading] = useState(true)
@@ -175,10 +175,15 @@ export default function MainPage() {
        // setDisplayTargetAmount(amountInTargetCurrency.toFixed(2))
        // setDisplayToCurrency(currencyNames[targetCurrency])
 
+        // setDisplaySrcAmount(amountInSourceCurrency)
+        // setDisplayFromCurrency(sourceCurrency)
+        // setDisplayTargetAmount(amountInTargetCurrency)
+        // setDisplayToCurrency(targetCurrency)
+
         setDisplaySrcAmount(amountInSourceCurrency)
-        setDisplayFromCurrency(sourceCurrency)
+        setDisplayFromCurrency(sourceInput)
         setDisplayTargetAmount(amountInTargetCurrency)
-        setDisplayToCurrency(targetCurrency)
+        setDisplayToCurrency(targetInput)
 
 
       };
