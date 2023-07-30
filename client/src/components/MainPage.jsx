@@ -86,7 +86,7 @@ export default function MainPage() {
             })
 
             console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
-            console.log("convertCurrencies response"+response.data)
+            console.log("convertCurrencies response : "+response.data)
             
         
             setIsloading(false)
