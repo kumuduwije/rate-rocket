@@ -189,12 +189,12 @@ export default function MainPage() {
       };
 
     return (
-        <div>
+        <div className=" md:mb-20 md:h-[100vh]">
             <h1 className=" lg:mx-32 text-center text-5xl font-bold text-green-500">Rate Rocket</h1>
             <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p>
 
             {/* Form Area */}
-            <div className="mt-5 flex items-center justify-center flex-col">
+            <div className="mt-5 flex items-center justify-center flex-col ">
                 <section className='w-full lg:w-1/2'>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
@@ -291,7 +291,18 @@ export default function MainPage() {
             </div>
     
             ): null}
-            
+
+
+            {/*<div className="text-center  text-gray-600 p-3 fixed bottom-0 w-[100%]"><p>Designed & Developed by Kaytrun by Kumudu</p></div>*/}
+
+
+            <div className="rounded-t-md shadow text-center p-4  dark:bg-gray-800 w-full fixed bottom-0 left-0  pt-5 md:mt-80">
+                <p className=" opacity-30  ">
+                     © Developed by Kaytrun ~ Kumudu Wijewardhana
+                </p>
+            </div>
+
+
         </div>
         
     )
