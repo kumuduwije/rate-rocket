@@ -4,6 +4,7 @@ import axios from "axios"
 import SyncIcon from '@mui/icons-material/Sync';
 import { styled } from '@mui/system';
 import Results from "./Results";
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const RotateIcon = styled(SyncIcon)`
   display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
@@ -189,7 +190,7 @@ export default function MainPage() {
       };
 
     return (
-        <div className=" md:mb-20 md:h-[100vh]">
+        <div className="md:mb-20">
             <h1 className=" lg:mx-32 text-center text-5xl font-bold text-green-500">Rate Rocket</h1>
             <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p>
 
@@ -296,9 +297,9 @@ export default function MainPage() {
             {/*<div className="text-center  text-gray-600 p-3 fixed bottom-0 w-[100%]"><p>Designed & Developed by Kaytrun by Kumudu</p></div>*/}
 
 
-            <div className="rounded-t-md shadow text-center p-4  dark:bg-gray-800 w-full fixed bottom-0 left-0  pt-5 md:mt-80">
-                <p className=" opacity-30  ">
-                     © Developed by Kaytrun ~ Kumudu Wijewardhana
+            <div className=" shadow text-center p-4  dark:bg-gray-800 w-full fixed bottom-0 left-0  pt-5 md:mt-80 sm:text-xs md:text-sm lg:text-md text-xs">
+                <p className=" text-gray-600">
+                     © Developed by Kaytrun ~ Kumudu Wijewardhana <a href="https://github.com/kumuduwije/rate-rocket" rel="noopener noreferrer" target="_blank"><GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-200" fontSize="small"/></a>
                 </p>
             </div>
 
