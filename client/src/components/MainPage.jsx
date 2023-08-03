@@ -308,7 +308,7 @@ export default function MainPage() {
 
             <div className=" shadow text-center p-4  dark:bg-gray-800 w-full fixed bottom-0 left-0  pt-5 md:mt-80 sm:text-xs md:text-sm lg:text-md text-xs">
                 <p className=" text-gray-600">
-                     © Developed by Kaytrun ~ Kumudu Wijewardhana <a href="https://github.com/kumuduwije/rate-rocket" rel="noopener noreferrer" target="_blank"><GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-200" fontSize="small"/></a>
+                     © Developed by Kaytrun ~ Kumudu Wijewardhana <a href="https://github.com/kumuduwije" rel="noopener noreferrer" target="_blank"><GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-200" fontSize="small"/></a>
                 </p>
             </div>
 
