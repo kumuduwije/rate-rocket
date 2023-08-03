@@ -73,18 +73,26 @@ export default function MainPage() {
           
             
         try{
-            // if(date === null){
-            //     setDate(getTodayDate())
-            // }
-            const response = await axios.get("http://localhost:5000/convertCurrencies",
-            {params:
-                {
-                date,
-                sourceCurrency,
-                targetCurrency,
-                amountInSourceCurrency
-                }
-            })
+
+            // const response = await axios.get("http://localhost:5000/convertCurrencies",
+            // {params:
+            //     {
+            //     date,
+            //     sourceCurrency,
+            //     targetCurrency,
+            //     amountInSourceCurrency
+            //     }
+            // })
+
+            const response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
+                {params:
+                        {
+                            date,
+                            sourceCurrency,
+                            targetCurrency,
+                            amountInSourceCurrency
+                        }
+                })
 
             console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
             console.log("convertCurrencies response : "+response.data)
@@ -125,7 +133,8 @@ export default function MainPage() {
     // }, [])
 
     const fetchData = (value, field) => {
-        fetch("http://localhost:5000/getAllCurrencies")
+        // fetch("http://localhost:5000/getAllCurrencies")
+        fetch("https://rate-rocket.onrender.com/getAllCurrencies")
             .then((response) => response.json())
             .then((json) => {
                 // Convert the object to an array of key-value pairs
