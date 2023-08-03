@@ -1,8 +1,10 @@
 
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import axios from "axios"
 import SyncIcon from '@mui/icons-material/Sync';
 import { styled } from '@mui/system';
+import Results from "./Results";
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const RotateIcon = styled(SyncIcon)`
   display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
@@ -42,7 +44,7 @@ export default function MainPage() {
     const [targetCurrency, setTargetCurrency] = useState("");
     const [amountInSourceCurrency, setAmountInSourceCurrency] = useState(0);
     const [amountInTargetCurrency, setAmountInTargetCurrency] = useState(0);
-    const [currencyNames, setCurrencyNames] = useState([])
+    // const [currencyNames, setCurrencyNames] = useState([])
     const [isloading, setIsloading] = useState(true)
     const [buttonText, setButtonText] = useState("Convert Currency")
     const [iconLoading, setIconLoading] = useState(true)
@@ -52,6 +54,12 @@ export default function MainPage() {
     const [displayFromCurrency, setDisplayFromCurrency] = useState('');
     const [displayTargetAmount, setDisplayTargetAmount] = useState('');
     const [displayToCurrency, setDisplayToCurrency] = useState('');
+
+    const [sourceInput, setSourceInput] = useState("");
+    const [sourceSearchResult, setSourceSearchResult] = useState([])
+
+    const [targetInput, setTargetInput] = useState("");
+    const [targetSearchResult, setTargetSearchResult] = useState([])
 
     // handleSubmit
     const handleSubmit =async (e) =>{
@@ -77,12 +85,14 @@ export default function MainPage() {
                 amountInSourceCurrency
                 }
             })
-            
+
+            console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
+            console.log("convertCurrencies response : "+response.data)
             
         
             setIsloading(false)
             setIconLoading(false)
-            setAmountInTargetCurrency(response.data)
+            setAmountInTargetCurrency(response.data.toFixed(2));
             setDisplayTargetAmount(response.data.toFixed(2));
             setShowResult(true)
             setButtonText("Convert Currency")
@@ -101,35 +111,91 @@ export default function MainPage() {
  
     }
     //Get currency names from api
-    useEffect(() => {
-        const getCurrencyNames = async() =>{
-            try{
-                const response = await axios.get("http://localhost:5000/getAllCurrencies");
-                setCurrencyNames(response.data)
-               console.log(response.data)
-            }catch(err){
-                console.error(err);
-            }
+    // useEffect(() => {
+    //     const getCurrencyNames = async() =>{
+    //         try{
+    //             const response = await axios.get("http://localhost:5000/getAllCurrencies");
+    //             setCurrencyNames(response.data)
+    //            console.log(response.data)
+    //         }catch(err){
+    //             console.error(err);
+    //         }
+    //     }
+    //     getCurrencyNames().then(r => {});
+    // }, [])
+
+    const fetchData = (value, field) => {
+        fetch("http://localhost:5000/getAllCurrencies")
+            .then((response) => response.json())
+            .then((json) => {
+                // Convert the object to an array of key-value pairs
+                const currenciesArray = Object.entries(json);
+
+                // Filter the array based on the currency name (value)
+                const result = currenciesArray.filter(([currencyCode, currencyName]) => {
+                    return value && currencyName.toLowerCase().includes(value.toLowerCase());
+                });
+
+                if(field === "src"){
+                    setSourceSearchResult(result)
+                    console.log("source result:"+ result);
+                }
+                else if (field === "target"){
+                    setTargetSearchResult(result)
+                    console.log("target result:"+ result);
+                }
+
+
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+    };
+
+
+
+
+    const handleChange = (value, src) =>{
+        if(src === "source"){
+            console.log("source:"+ value)
+            setSourceInput(value)
+            fetchData(value,"src")
         }
-        getCurrencyNames();
-    }, [])
+        else if(src === "target"){
+            console.log("target:"+ value)
+            setTargetInput(value)
+            fetchData(value,"target")
+        }
+
+
+    }
 
     const handleButtonClick = () => {
-       setDisplaySrcAmount(amountInSourceCurrency)
-       setDisplayFromCurrency(currencyNames[sourceCurrency])
-       setDisplayTargetAmount(amountInTargetCurrency.toFixed(2))
-       setDisplayToCurrency(currencyNames[targetCurrency])
+       // setDisplaySrcAmount(amountInSourceCurrency)
+       // setDisplayFromCurrency(currencyNames[sourceCurrency])
+       // setDisplayTargetAmount(amountInTargetCurrency.toFixed(2))
+       // setDisplayToCurrency(currencyNames[targetCurrency])
 
-       
+        // setDisplaySrcAmount(amountInSourceCurrency)
+        // setDisplayFromCurrency(sourceCurrency)
+        // setDisplayTargetAmount(amountInTargetCurrency)
+        // setDisplayToCurrency(targetCurrency)
+
+        setDisplaySrcAmount(amountInSourceCurrency)
+        setDisplayFromCurrency(sourceInput)
+        setDisplayTargetAmount(amountInTargetCurrency)
+        setDisplayToCurrency(targetInput)
+
+
       };
 
     return (
-        <div>
+        <div className="md:mb-20">
             <h1 className=" lg:mx-32 text-center text-5xl font-bold text-green-500">Rate Rocket</h1>
             <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p>
 
             {/* Form Area */}
-            <div className="mt-5 flex items-center justify-center flex-col">
+            <div className="mt-5 flex items-center justify-center flex-col ">
                 <section className='w-full lg:w-1/2'>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
@@ -142,52 +208,61 @@ export default function MainPage() {
                              style={{ appearance: "none" }} // Add the appearance property here
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required />
                         </div>
-
+                        {/*Source Currency*/}
                         <div className="mb-4">
-                            <label
-                                htmlFor={sourceCurrency}
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source Currency:
-                            </label>
+                           {/* <label*/}
+                           {/*     htmlFor={sourceCurrency}*/}
+                           {/*     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source Currency:*/}
+                           {/* </label>*/}
                            
-                            <select 
-                            onChange={(e)=>setSourceCurrency(e.target.value)} 
-                            id={sourceCurrency} 
-                            name={sourceCurrency} 
-                            value={sourceCurrency}
-                   
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" required placeholder="Source Currency:">
-                            
-                            <option value="Select source currency">Select source currency</option>
-                           
-                           {Object.keys(currencyNames).map((currency) =>
-                            <option className="p-1" key={currency} value={currency}>
-                                {currencyNames[currency]}
-                            </option>
-                           )}
+                           {/* <select */}
+                           {/* onChange={(e)=>setSourceCurrency(e.target.value)} */}
+                           {/* id={sourceCurrency} */}
+                           {/* name={sourceCurrency} */}
+                           {/* value={sourceCurrency}*/}
 
-                            </select>
+                           {/* className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" required placeholder="Source Currency:">*/}
+                           {/* */}
+                           {/* <option value="Select source currency">Select source currency</option>*/}
+                           
+                           {/*{Object.keys(currencyNames).map((currency) =>*/}
+                           {/* <option className="p-1" key={currency} value={currency}>*/}
+                           {/*     {currencyNames[currency]}*/}
+                           {/* </option>*/}
+                           {/*)}*/}
+
+                           {/* </select>*/}
+
+                            <label htmlFor={sourceCurrency}
+                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source Currency:</label>
+                            <input
+                                id={sourceCurrency}
+                                name={sourceCurrency}
+                                value={sourceInput}
+                                onChange={(e)=>handleChange(e.target.value, "source")}
+                                type="text"
+                                   placeholder="Type source currency name: "
+                                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"></input>
+
                         </div>
 
+                        <Results sourceInput = {sourceInput} sourceSearchResult={sourceSearchResult}  setSourceInput ={setSourceInput} target={false} setSourceCurrency={setSourceCurrency}/>
+
                         <div className="mb-4">
-                            <label
-                                htmlFor={targetCurrency} name={targetCurrency}
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Target Currency:</label>
-                            <select onChange={(e)=>setTargetCurrency(e.target.value)} 
-                              id={targetCurrency} 
-                              name={targetCurrency} 
-                              value={targetCurrency}
-                              
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Target Currency:">
-                                <option value="Select target currency">Select target currency</option>
-                                
-                                {Object.keys(currencyNames).map((currency) =>
-                            <option className="p-1" key={currency} value={currency}>
-                                {currencyNames[currency]}
-                            </option>
-                           )}
-                            
-                            </select>
+
+                            <label htmlFor={targetCurrency}
+                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Target Currency:</label>
+                            <input
+                                id={targetCurrency}
+                                name={targetCurrency}
+                                value={targetInput}
+                                onChange={(e)=>handleChange(e.target.value, "target")}
+                                type="text"
+                                placeholder="Type target currency name: "
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"></input>
+
                         </div>
+                        <Results targetInput = {targetInput} targetSearchResult={targetSearchResult} setTargetSearchResult={setTargetSearchResult} setTargetInput ={setTargetInput} target={true} setTargetCurrency={setTargetCurrency}/>
 
                         <div className="mb-4">
                             <label
@@ -217,7 +292,18 @@ export default function MainPage() {
             </div>
     
             ): null}
-            
+
+
+            {/*<div className="text-center  text-gray-600 p-3 fixed bottom-0 w-[100%]"><p>Designed & Developed by Kaytrun by Kumudu</p></div>*/}
+
+
+            <div className=" shadow text-center p-4  dark:bg-gray-800 w-full fixed bottom-0 left-0  pt-5 md:mt-80 sm:text-xs md:text-sm lg:text-md text-xs">
+                <p className=" text-gray-600">
+                     © Developed by Kaytrun ~ Kumudu Wijewardhana <a href="https://github.com/kumuduwije/rate-rocket" rel="noopener noreferrer" target="_blank"><GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-200" fontSize="small"/></a>
+                </p>
+            </div>
+
+
         </div>
         
     )
