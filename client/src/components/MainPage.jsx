@@ -140,18 +140,25 @@ export default function MainPage() {
                 // Convert the object to an array of key-value pairs
                 const currenciesArray = Object.entries(json);
 
-                // Filter the array based on the currency name (value)
+                // Filter the array based on the currency name and code (value)
                 const result = currenciesArray.filter(([currencyCode, currencyName]) => {
-                    return value && currencyName.toLowerCase().includes(value.toLowerCase());
+                    console.log(`currencyCodes ${currencyCode}`)
+                 
+                    return (value && currencyName.toLowerCase().includes(value.toLowerCase())  || value && currencyCode.toLowerCase().includes(value.toLowerCase()));
                 });
+
+      
+
+                console.log(result)
 
                 if(field === "src"){
                     setSourceSearchResult(result)
-                    console.log("source result:"+ result);
+                    
+                    //console.log("source result:"+ result);
                 }
                 else if (field === "target"){
                     setTargetSearchResult(result)
-                    console.log("target result:"+ result);
+                    //console.log("target result:"+ result);
                 }
 
 
@@ -166,12 +173,12 @@ export default function MainPage() {
 
     const handleChange = (value, src) =>{
         if(src === "source"){
-            console.log("source:"+ value)
+            //console.log("source:"+ value)
             setSourceInput(value)
             fetchData(value,"src")
         }
         else if(src === "target"){
-            console.log("target:"+ value)
+            //console.log("target:"+ value)
             setTargetInput(value)
             fetchData(value,"target")
         }
@@ -199,18 +206,18 @@ export default function MainPage() {
       };
 
     return (
-        <div className="md:mb-20">
-            <h1 className=" lg:mx-32 text-center text-5xl font-bold text-green-500">Rate Rocket</h1>
-            <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p>
+        <div className=" mt-6 ">
+            <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1>
+            {/* <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p> */}
 
             {/* Form Area */}
-            <div className="mt-5 flex items-center justify-center flex-col ">
+            <div className="mt-5 to  flex items-center justify-center flex-col ">
                 <section className='w-full lg:w-1/2'>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
                             <label
                                 htmlFor={date}
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date: </label>
+                                className="block mb-2 text-sm font-medium light:text-gray-900 dark:text-white">Date: </label>
 
                             <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} 
                             defaultValue={getTodayDate()}
@@ -243,15 +250,16 @@ export default function MainPage() {
                            {/* </select>*/}
 
                             <label htmlFor={sourceCurrency}
-                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source Currency:</label>
+                                   className="block mb-2 text-sm font-medium light:text-gray-900 dark:text-white">Source Currency:</label>
                             <input
+                                required
                                 id={sourceCurrency}
                                 name={sourceCurrency}
                                 value={sourceInput}
                                 onChange={(e)=>handleChange(e.target.value, "source")}
                                 type="text"
                                    placeholder="Type source currency name: "
-                                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"></input>
+                                   className="bg-gray-50 border border-gray-300 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 e dark:focus:ring-green-500 dark:focus:border-green-500"></input>
 
                         </div>
 
@@ -260,8 +268,9 @@ export default function MainPage() {
                         <div className="mb-4">
 
                             <label htmlFor={targetCurrency}
-                                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Target Currency:</label>
+                                   className="block mb-2 text-sm font-medium light:text-gray-900 dark:text-white">Target Currency:</label>
                             <input
+                                required
                                 id={targetCurrency}
                                 name={targetCurrency}
                                 value={targetInput}
@@ -277,7 +286,7 @@ export default function MainPage() {
                             <label
                                 htmlFor={amountInSourceCurrency}
                                 name={amountInSourceCurrency}
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount in Source Currency:</label>
+                                className="block mb-2 text-sm font-medium light:text-gray-900 dark:text-white">Amount in Source Currency:</label>
 
                             <input onChange={(e)=>setAmountInSourceCurrency(e.target.value)} type="number" id={amountInSourceCurrency}
                             name={amountInSourceCurrency}
@@ -293,7 +302,7 @@ export default function MainPage() {
             </div>
             {/* Result */}
             {!isloading ? (
-                <div className='text-center py-5'>
+                <div className='text-center py-5 mt-5 '>
                 {showResult ? <p className='text-lg opacity-80'>
                 {displaySrcAmount} {displayFromCurrency} is equal to <span className='text-green-400 font-semibold'>{displayTargetAmount}</span>  in {displayToCurrency+"s"}
                 </p>:null}
@@ -306,9 +315,9 @@ export default function MainPage() {
             {/*<div className="text-center  text-gray-600 p-3 fixed bottom-0 w-[100%]"><p>Designed & Developed by Kaytrun by Kumudu</p></div>*/}
 
 
-            <div className=" shadow text-center p-4  dark:bg-gray-800 w-full fixed bottom-0 left-0  pt-5 md:mt-80 sm:text-xs md:text-sm lg:text-md text-xs">
+            <div className=" z-[-1] shadow text-center p-4   w-full fixed bottom-0 left-0  pt-5 md:mt-80 sm:text-xs md:text-sm lg:text-md text-xs">
                 <p className=" text-gray-600">
-                     © Developed by Kaytrun ~ Kumudu Wijewardhana <a href="https://github.com/kumuduwije" rel="noopener noreferrer" target="_blank"><GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-200" fontSize="small"/></a>
+                      Proudly Made In 🇱🇰  by Kumudu Wijewardene <a href="https://github.com/kumuduwije" rel="noopener noreferrer" target="_blank"><GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-200" fontSize="small"/></a>
                 </p>
             </div>
 
