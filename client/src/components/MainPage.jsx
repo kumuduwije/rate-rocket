@@ -1,10 +1,11 @@
 
-import React, {useState} from 'react'
+import React, {useState,useRef} from 'react'
 import axios from "axios"
 import SyncIcon from '@mui/icons-material/Sync';
 import { styled } from '@mui/system';
 import Results from "./Results";
 import GitHubIcon from '@mui/icons-material/GitHub';
+import { IoIosClose } from "react-icons/io";
 
 const RotateIcon = styled(SyncIcon)`
   display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
@@ -61,6 +62,13 @@ export default function MainPage() {
     const [targetInput, setTargetInput] = useState("");
     const [targetSearchResult, setTargetSearchResult] = useState([])
 
+    const [isLoadingResults, setIsLoadingResults] = useState(false); //For search suggestions
+    
+
+    // Create refs for source and target inputs
+  const sourceInputRef = useRef(null);
+  const targetInputRef = useRef(null);
+
     // handleSubmit
     const handleSubmit =async (e) =>{
           e.preventDefault() 
@@ -74,25 +82,25 @@ export default function MainPage() {
             
         try{
 
-            // const response = await axios.get("http://localhost:5000/convertCurrencies",
-            // {params:
-            //     {
-            //     date,
-            //     sourceCurrency,
-            //     targetCurrency,
-            //     amountInSourceCurrency
-            //     }
-            // })
+            const response = await axios.get("http://localhost:4000/convertCurrencies",
+            {params:
+                {
+                date,
+                sourceCurrency,
+                targetCurrency,
+                amountInSourceCurrency
+                }
+            })
 
-            const response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
-                {params:
-                        {
-                            date,
-                            sourceCurrency,
-                            targetCurrency,
-                            amountInSourceCurrency
-                        }
-                })
+            // const response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
+            //     {params:
+            //             {
+            //                 date,
+            //                 sourceCurrency,
+            //                 targetCurrency,
+            //                 amountInSourceCurrency
+            //             }
+            //     })
 
             console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
             console.log("convertCurrencies response : "+response.data)
@@ -133,8 +141,9 @@ export default function MainPage() {
     // }, [])
 
     const fetchData = (value, field) => {
-        // fetch("http://localhost:5000/getAllCurrencies")
-        fetch("https://rate-rocket.onrender.com/getAllCurrencies")
+        setIsLoadingResults(true); 
+         fetch("http://localhost:4000/getAllCurrencies")
+        //fetch("https://rate-rocket.onrender.com/getAllCurrencies")
             .then((response) => response.json())
             .then((json) => {
                 // Convert the object to an array of key-value pairs
@@ -142,14 +151,14 @@ export default function MainPage() {
 
                 // Filter the array based on the currency name and code (value)
                 const result = currenciesArray.filter(([currencyCode, currencyName]) => {
-                    console.log(`currencyCodes ${currencyCode}`)
+                    //console.log(`currencyCodes ${currencyCode}`)
                  
                     return (value && currencyName.toLowerCase().includes(value.toLowerCase())  || value && currencyCode.toLowerCase().includes(value.toLowerCase()));
                 });
 
       
 
-                console.log(result)
+                //console.log(result)
 
                 if(field === "src"){
                     setSourceSearchResult(result)
@@ -165,7 +174,10 @@ export default function MainPage() {
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
-            });
+
+            }).finally(() => {
+                setIsLoadingResults(false); // Set loading to false when data fetching is complete
+              });
     };
 
 
@@ -185,6 +197,22 @@ export default function MainPage() {
 
 
     }
+
+    const handleClear = (field) => {
+        if (field === 'source') {
+          setSourceInput('');
+          
+          if (sourceInputRef.current) {
+      
+            sourceInputRef.current.focus();
+          }
+        } else if (field === 'target') {
+          setTargetInput('');
+          if (targetInputRef.current) {
+            targetInputRef.current.focus();
+          }
+        }
+      };
 
     const handleButtonClick = () => {
        // setDisplaySrcAmount(amountInSourceCurrency)
@@ -206,7 +234,9 @@ export default function MainPage() {
       };
 
     return (
-        <div className=" mt-6 ">
+        
+        <div className=" mt-6 relative ">
+        
             <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1>
             {/* <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p> */}
 
@@ -217,76 +247,76 @@ export default function MainPage() {
                         <div className="mb-4">
                             <label
                                 htmlFor={date}
-                                className="block mb-2 text-sm font-medium light:text-gray-900 dark:text-white">Date: </label>
+                                className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">Date: </label>
 
                             <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} 
                             defaultValue={getTodayDate()}
-                             style={{ appearance: "none" }} // Add the appearance property here
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required />
+                             style={{ appearance: "none"  }} // Add the appearance property here
+                            className="bg-gray-50 border col border-gray-300  text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  text-black dark:text-green-400 font-medium dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required />
                         </div>
                         {/*Source Currency*/}
-                        <div className="mb-4">
-                           {/* <label*/}
-                           {/*     htmlFor={sourceCurrency}*/}
-                           {/*     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source Currency:*/}
-                           {/* </label>*/}
-                           
-                           {/* <select */}
-                           {/* onChange={(e)=>setSourceCurrency(e.target.value)} */}
-                           {/* id={sourceCurrency} */}
-                           {/* name={sourceCurrency} */}
-                           {/* value={sourceCurrency}*/}
-
-                           {/* className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" required placeholder="Source Currency:">*/}
-                           {/* */}
-                           {/* <option value="Select source currency">Select source currency</option>*/}
-                           
-                           {/*{Object.keys(currencyNames).map((currency) =>*/}
-                           {/* <option className="p-1" key={currency} value={currency}>*/}
-                           {/*     {currencyNames[currency]}*/}
-                           {/* </option>*/}
-                           {/*)}*/}
-
-                           {/* </select>*/}
-
-                            <label htmlFor={sourceCurrency}
-                                   className="block mb-2 text-sm font-medium light:text-gray-900 dark:text-white">Source Currency:</label>
-                            <input
-                                required
-                                id={sourceCurrency}
-                                name={sourceCurrency}
-                                value={sourceInput}
-                                onChange={(e)=>handleChange(e.target.value, "source")}
-                                type="text"
-                                   placeholder="Type source currency name: "
-                                   className="bg-gray-50 border border-gray-300 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 e dark:focus:ring-green-500 dark:focus:border-green-500"></input>
-
+                        <div className="mb-4 relative">
+                            <label htmlFor={sourceCurrency} className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">
+                                Source Currency:
+                            </label>
+                            <div className="relative">
+                                <input
+                                ref={sourceInputRef}
+                                    required
+                                    id={sourceCurrency}
+                                    name={sourceCurrency}
+                                    value={sourceInput}
+                                    onChange={(e) => handleChange(e.target.value, "source")}
+                                    type="text"
+                                    placeholder="Type source currency name: "
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 e dark:focus:ring-green-500 dark:focus:border-green-500 pr-10" // Add pr-10 for padding-right to accommodate the close icon
+                                />
+                                {sourceInput && ( // Render the close icon only when sourceInput is not empty
+                                    <IoIosClose
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
+                                        onClick={() => handleClear("source")} // Clear the sourceInput when the close icon is clicked
+                                    />
+                                )}
+                            </div>
                         </div>
 
-                        <Results sourceInput = {sourceInput} sourceSearchResult={sourceSearchResult}  setSourceInput ={setSourceInput} target={false} setSourceCurrency={setSourceCurrency}/>
 
-                        <div className="mb-4">
+                        <Results sourceInput = {sourceInput} sourceSearchResult={sourceSearchResult}  setSourceInput ={setSourceInput} target={false} setSourceCurrency={setSourceCurrency} isLoadingResults={isLoadingResults}/>
 
-                            <label htmlFor={targetCurrency}
-                                   className="block mb-2 text-sm font-medium light:text-gray-900 dark:text-white">Target Currency:</label>
-                            <input
-                                required
-                                id={targetCurrency}
-                                name={targetCurrency}
-                                value={targetInput}
-                                onChange={(e)=>handleChange(e.target.value, "target")}
-                                type="text"
-                                placeholder="Type target currency name: "
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"></input>
+                            {/*target Currency*/}
 
+                        <div className="mb-4 relative">
+                            <label htmlFor={targetCurrency} className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">
+                                Target Currency:
+                            </label>
+                            <div className="relative">
+                                <input
+                                    ref={targetInputRef}
+                                    required
+                                    id={targetCurrency}
+                                    name={targetCurrency}
+                                    value={targetInput}
+                                    onChange={(e) => handleChange(e.target.value, "target")}
+                                    type="text"
+                                    placeholder="Type target currency name: "
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 e dark:focus:ring-green-500 dark:focus:border-green-500 pr-10" // Add pr-10 for padding-right to accommodate the close icon
+                                />
+                                {targetInput && ( // Render the close icon only when targetInput is not empty
+                                    <IoIosClose
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
+                                        onClick={() => handleClear("target")} // Clear the targetInput when the close icon is clicked
+                                    />
+                                )}
+                            </div>
                         </div>
-                        <Results targetInput = {targetInput} targetSearchResult={targetSearchResult} setTargetSearchResult={setTargetSearchResult} setTargetInput ={setTargetInput} target={true} setTargetCurrency={setTargetCurrency}/>
+
+                        <Results targetInput = {targetInput} targetSearchResult={targetSearchResult} setTargetSearchResult={setTargetSearchResult} setTargetInput ={setTargetInput} target={true} setTargetCurrency={setTargetCurrency} isLoadingResults={isLoadingResults}/>
 
                         <div className="mb-4">
                             <label
                                 htmlFor={amountInSourceCurrency}
                                 name={amountInSourceCurrency}
-                                className="block mb-2 text-sm font-medium light:text-gray-900 dark:text-white">Amount in Source Currency:</label>
+                                className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">Amount in Source Currency:</label>
 
                             <input onChange={(e)=>setAmountInSourceCurrency(e.target.value)} type="number" id={amountInSourceCurrency}
                             name={amountInSourceCurrency}
@@ -302,9 +332,9 @@ export default function MainPage() {
             </div>
             {/* Result */}
             {!isloading ? (
-                <div className='text-center py-5 mt-5 '>
+                <div className='text-center py-5 mt-5 text-blue-950 dark:text-white '>
                 {showResult ? <p className='text-lg opacity-80'>
-                {displaySrcAmount} {displayFromCurrency} is equal to <span className='text-green-400 font-semibold'>{displayTargetAmount}</span>  in {displayToCurrency+"s"}
+                {displaySrcAmount} {displayFromCurrency}  ＝  <span className='text-green-400 font-semibold'>{displayTargetAmount}</span>  in {displayToCurrency+"s"}
                 </p>:null}
                  
             </div>
@@ -315,7 +345,7 @@ export default function MainPage() {
             {/*<div className="text-center  text-gray-600 p-3 fixed bottom-0 w-[100%]"><p>Designed & Developed by Kaytrun by Kumudu</p></div>*/}
 
 
-            <div className=" z-[-1] shadow text-center p-4   w-full fixed bottom-0 left-0  pt-5 md:mt-80 sm:text-xs md:text-sm lg:text-md text-xs">
+            <div className=" absolute  z-[-1]  text-center pt-4 w-full  md:mt-40 sm:text-xs md:text-sm lg:text-md text-xs">
                 <p className=" text-gray-600">
                       Proudly Made In 🇱🇰  by Kumudu Wijewardene <a href="https://github.com/kumuduwije" rel="noopener noreferrer" target="_blank"><GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-200" fontSize="small"/></a>
                 </p>
