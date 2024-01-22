@@ -4,8 +4,11 @@ import axios from "axios"
 import SyncIcon from '@mui/icons-material/Sync';
 import { styled } from '@mui/system';
 import Results from "./Results";
-import GitHubIcon from '@mui/icons-material/GitHub';
+//import GitHubIcon from '@mui/icons-material/GitHub';
 import { IoIosClose } from "react-icons/io";
+
+
+let response =""; // response global variable update in line 88
 
 const RotateIcon = styled(SyncIcon)`
   display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
@@ -63,6 +66,8 @@ export default function MainPage() {
     const [targetSearchResult, setTargetSearchResult] = useState([])
 
     const [isLoadingResults, setIsLoadingResults] = useState(false); //For search suggestions
+    const [errorMessage, setErrorMessage] = useState(null);
+
     
 
     // Create refs for source and target inputs
@@ -82,7 +87,7 @@ export default function MainPage() {
             
         try{
 
-            const response = await axios.get("http://localhost:4000/convertCurrencies",
+            response = await axios.get("http://localhost:4000/convertCurrencies",
             {params:
                 {
                 date,
@@ -91,6 +96,8 @@ export default function MainPage() {
                 amountInSourceCurrency
                 }
             })
+
+
 
             // const response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
             //     {params:
@@ -105,23 +112,46 @@ export default function MainPage() {
             console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
             console.log("convertCurrencies response : "+response.data)
             
-        
-            setIsloading(false)
-            setIconLoading(false)
-            setAmountInTargetCurrency(response.data.toFixed(2));
-            setDisplayTargetAmount(response.data.toFixed(2));
-            setShowResult(true)
-            setButtonText("Convert Currency")
-           
-            
+            if(response.data !== null || response){
 
-            
+                setIsloading(false)
+                setIconLoading(false)
+                setAmountInTargetCurrency(response.data.toFixed(2));
+                setDisplayTargetAmount(response.data.toFixed(2));
+                setShowResult(true)
+                setButtonText("Convert Currency")
+            }else{
+                console.log("You entered data is wrong")
+                setButtonText("Convert Currency")
+                setIconLoading(false)
+                setIsloading(false)
+                
+            }
+        
+              
      
         }catch(err){
 
             console.error(err)
-        
-        }
+
+            // Handle error response from the server
+            if (err.response) {
+                // The request was made and the server responded with a status code
+                if (err.response.status === 500) {
+                  console.log("Server responded with a 500 error:", err.response.data);
+                  setErrorMessage(err.response.data.description);
+                } else {
+                  console.log("Server responded with an error:", err.response.data);
+                  // Handle other status codes if needed
+                }
+              } else if (err.request) {
+                // The request was made, but no response was received
+                console.log("No response received from the server.");
+              } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error("Error during request setup:", err.message);
+              }
+            }
         
         
  
@@ -162,12 +192,14 @@ export default function MainPage() {
 
                 if(field === "src"){
                     setSourceSearchResult(result)
+                    //setDisplayFromCurrency(result);
                     
-                    //console.log("source result:"+ result);
+                    console.log("source result 196: "+ result);
                 }
                 else if (field === "target"){
                     setTargetSearchResult(result)
-                    //console.log("target result:"+ result);
+                    //setDisplayToCurrency(result);
+              
                 }
 
 
@@ -188,6 +220,7 @@ export default function MainPage() {
             //console.log("source:"+ value)
             setSourceInput(value)
             fetchData(value,"src")
+      
         }
         else if(src === "target"){
             //console.log("target:"+ value)
@@ -334,22 +367,32 @@ export default function MainPage() {
             {!isloading ? (
                 <div className='text-center py-5 mt-5 text-blue-950 dark:text-white '>
                 {showResult ? <p className='text-lg opacity-80'>
-                {displaySrcAmount} {displayFromCurrency}  ＝  <span className='text-green-400 font-semibold'>{displayTargetAmount}</span>  in {displayToCurrency+"s"}
+         
+                {displaySrcAmount} {`${displaySrcAmount > 1 ? displayFromCurrency +"s" : displayFromCurrency}`}  ＝  <span className='text-green-600 font-semibold'>{displayTargetAmount}</span>  {`${displayTargetAmount > 1 ? displayToCurrency + "s" : displayToCurrency}`}
                 </p>:null}
                  
             </div>
     
             ): null}
 
+            {/* If the user entered invalid data for textfields */}
+            {response.data === null ? (<div className=' text-center py-5 mt-5 text-red-500'>You entered invalid data, Select currencies from the dropdown. </div>) : ""}
+
 
             {/*<div className="text-center  text-gray-600 p-3 fixed bottom-0 w-[100%]"><p>Designed & Developed by Kaytrun by Kumudu</p></div>*/}
 
 
-            <div className=" absolute  z-[-1]  text-center pt-4 w-full  md:mt-40 sm:text-xs md:text-sm lg:text-md text-xs">
+            {/* <div className=" fixed bottom-0 left-0 p-5  z-[-1]  text-center pt-4 w-full  md:mt-40 sm:text-xs md:text-sm lg:text-md text-xs">
                 <p className=" text-gray-600">
                       Proudly Made In 🇱🇰  by Kumudu Wijewardene <a href="https://github.com/kumuduwije" rel="noopener noreferrer" target="_blank"><GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-200" fontSize="small"/></a>
                 </p>
-            </div>
+            </div> */}
+
+            {errorMessage && (
+  <div className="text-red-500 text-center py-2">
+    Error: {errorMessage}
+  </div>
+)}
 
 
         </div>
