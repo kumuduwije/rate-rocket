@@ -51,7 +51,7 @@ export default function Results({
       {/* {isLoadingResults && <Oval />}  */}
       
       { input !== "" && searchResult && searchResult.length > 0 &&(
-        <div className={`w-100 opacity-60 flex flex-col rounded-md mt-1 bg-gray-200  dark:bg-[#04293A] p-3 max-h-60 overflow-y-scroll ${isClicked ? 'hidden' : ''}`}>
+        <div className={`w-100 opacity-60 flex flex-col rounded-md mt-1 bg-white shadow-lg  dark:bg-[#04293A] p-3 max-h-60 overflow-y-scroll ${isClicked ? 'hidden' : ''}`}>
           {isLoadingResults ? (
             <div className=' flex justify-center items-center '><CircularProgress color="success" style={{ animationDuration: '1.5s' }}/></div> // Show Oval while loading
           ) : (

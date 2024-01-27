@@ -69,29 +69,35 @@ function App() {
          {/* {!error ? (<MainPage/>): (<div className=' text-red-500 flex justify-center'>{error}</div>)}   */}
 
 
+         <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1>
+
+
 
          <div >
             {loading && <p className=' text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-green-500 text-lg'><CircularProgress color="success" style={{ animationDuration: '1s' }}/></p>}
-            {!loading && !error && <MainPage />}
+            {(!loading && !error && isOnline )  ?<MainPage /> :"" }
             {!loading && error && <div className='text-red-500'>{error}</div>}
+            {!isOnline ? <div className='text-red-500 text-lg text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>{"Please connect to the internet "}</div>: "" }
 
       
       
       
-            <div className='absolute right-0 bottom-0 p-5'>
+            <div>
+              <div className='absolute right-0 bottom-0 p-5'>
               <div className='flex justify-center items-center text-gray-400'>
                 <div className={isOnline ? 'bg-green-500 rounded h-2 w-2 mr-1' : 'bg-red-500 rounded h-2 w-2 mr-1'}></div>
                 <div>{isOnline ? 'Online' : 'Offline'}</div>
               </div>
             </div>
 
-            <div className="absolute bottom-0 left-0 p-5 z[-1] md:mt-40 sm:text-xs md:text-sm lg:text-md text-xs">
+            <div className="absolute bottom-0  left-0 p-5 z[-1] md:mt-40 sm:text-xs md:text-sm lg:text-md text-xs">
               <p className="text-gray-600 text-center">
-                Proudly Made In 🇱🇰 by Kumudu Wijewardene{' '}
+                Proudly Made In 🇱🇰 by Kumudu Wijewardena
                 <a href="https://github.com/kumuduwije" rel="noopener noreferrer" target="_blank">
-                  <GitHubIcon className="flex mb-[3px] ml-[2px] hover:cursor-pointer text-gray-400 hover:text-gray-500 dark:hover:text-gray-200" fontSize="small" />
+                  <GitHubIcon className="flex mb-[3px] ml-[5px] hover:cursor-pointer text-gray-400 hover:text-gray-500 dark:hover:text-gray-200" fontSize="small" />
                 </a>
               </p>
+            </div>
             </div>
         </div>
     </>

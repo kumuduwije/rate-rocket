@@ -270,7 +270,7 @@ export default function MainPage() {
         
         <div className=" mt-6 relative ">
         
-            <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1>
+            {/* <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1> */}
             {/* <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p> */}
 
             {/* Form Area */}
@@ -365,8 +365,9 @@ export default function MainPage() {
             </div>
             {/* Result */}
             {!isloading ? (
-                <div className='text-center py-5 mt-5 text-blue-950 dark:text-white '>
-                {showResult ? <p className='text-lg opacity-80'>
+                <div className='  text-center py-5  text-blue-950 dark:text-white '>
+
+                {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "")  ? <p className='text-lg opacity-80'>
          
                 {displaySrcAmount} {`${displaySrcAmount > 1 ? displayFromCurrency +"s" : displayFromCurrency}`}  ＝  <span className='text-green-600 font-semibold'>{displayTargetAmount}</span>  {`${displayTargetAmount > 1 ? displayToCurrency + "s" : displayToCurrency}`}
                 </p>:null}
