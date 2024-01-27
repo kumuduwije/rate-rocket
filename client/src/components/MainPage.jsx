@@ -87,27 +87,27 @@ export default function MainPage() {
             
         try{
 
-            response = await axios.get("http://localhost:4000/convertCurrencies",
-            {params:
-                {
-                date,
-                sourceCurrency,
-                targetCurrency,
-                amountInSourceCurrency
-                }
-            })
+            // response = await axios.get("http://localhost:4000/convertCurrencies",
+            // {params:
+            //     {
+            //     date,
+            //     sourceCurrency,
+            //     targetCurrency,
+            //     amountInSourceCurrency
+            //     }
+            // })
 
 
 
-            // const response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
-            //     {params:
-            //             {
-            //                 date,
-            //                 sourceCurrency,
-            //                 targetCurrency,
-            //                 amountInSourceCurrency
-            //             }
-            //     })
+             response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
+                {params:
+                        {
+                            date,
+                            sourceCurrency,
+                            targetCurrency,
+                            amountInSourceCurrency
+                        }
+                })
 
             console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
             console.log("convertCurrencies response : "+response.data)
@@ -172,8 +172,8 @@ export default function MainPage() {
 
     const fetchData = (value, field) => {
         setIsLoadingResults(true); 
-         fetch("http://localhost:4000/getAllCurrencies")
-        //fetch("https://rate-rocket.onrender.com/getAllCurrencies")
+         //fetch("http://localhost:4000/getAllCurrencies")
+        fetch("https://rate-rocket.onrender.com/getAllCurrencies")
             .then((response) => response.json())
             .then((json) => {
                 // Convert the object to an array of key-value pairs
@@ -194,7 +194,7 @@ export default function MainPage() {
                     setSourceSearchResult(result)
                     //setDisplayFromCurrency(result);
                     
-                    console.log("source result 196: "+ result);
+                    //console.log("source result 196: "+ result);
                 }
                 else if (field === "target"){
                     setTargetSearchResult(result)
