@@ -36,7 +36,25 @@ const getTodayDate =()=> {
 
     return `${year}-${month}-${day}`;
 }
+
+function formatNumberWithComma(input, includeDecimals = false) {
+    const number = parseFloat(input);
   
+    if (isNaN(number)) {
+      return 'Invalid input';
+    }
+  
+    const decimalOptions = includeDecimals
+      ? { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+      : {};
+  
+    const formattedNumber = number.toLocaleString('en-US', {
+      style: 'decimal',
+      ...decimalOptions,
+    });
+  
+    return formattedNumber;
+  }
 
 
 export default function MainPage() {
@@ -282,7 +300,7 @@ export default function MainPage() {
                                 htmlFor={date}
                                 className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">Date: </label>
 
-                            <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} 
+                            <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} min={"1999-01-04"} max={getTodayDate()}
                             defaultValue={getTodayDate()}
                              style={{ appearance: "none"  }} // Add the appearance property here
                             className="bg-gray-50 border col border-gray-300  text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  text-black dark:text-green-400 font-medium dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required />
@@ -365,12 +383,21 @@ export default function MainPage() {
             </div>
             {/* Result */}
             {!isloading ? (
-                <div className='  text-center py-5  text-blue-950 dark:text-white '>
+                <div className='  text-center py-5 mt-10  text-blue-950 dark:text-white  flex items-center justify-center'>
 
-                {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "")  ? <p className='text-lg opacity-80'>
-         
-                {displaySrcAmount} {`${displaySrcAmount > 1 ? displayFromCurrency +"s" : displayFromCurrency}`}  ＝  <span className='text-green-600 font-semibold'>{displayTargetAmount}</span>  {`${displayTargetAmount > 1 ? displayToCurrency + "s" : displayToCurrency}`}
-                </p>:null}
+                {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "")  ? 
+                
+                <div className='block md:flex text-lg opacity-80 '>
+                     <div className=' flex  mr-2'>
+                     <div className=' text-gray-700 text-[25px] md:text-[25px]'>{formatNumberWithComma(displaySrcAmount)}</div>
+                     <div className=' ml-1'>{`${displaySrcAmount > 1 ? displayFromCurrency +"s" : displayFromCurrency}`}</div>
+                     </div> 
+                  ＝  
+                <div className='mx-2 text-green-600 text-[25px] font-semibold'>{formatNumberWithComma(displayTargetAmount)}</div>  
+                <div>{`${displayTargetAmount > 1 ? displayToCurrency + "s" : displayToCurrency}`}</div>
+
+
+                </div>:null}
                  
             </div>
     
