@@ -117,7 +117,8 @@ export default function MainPage() {
 
 
 
-             response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
+            //  response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies"
+            response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
                 {params:
                         {
                             date,
@@ -191,7 +192,8 @@ export default function MainPage() {
     const fetchData = (value, field) => {
         setIsLoadingResults(true); 
          //fetch("http://localhost:4000/getAllCurrencies")
-        fetch("https://rate-rocket.onrender.com/getAllCurrencies")
+        //fetch("https://rate-rocket.onrender.com/getAllCurrencies")
+        fetch("https://rate-rocket-api.vercel.app/getAllCurrencies")
             .then((response) => response.json())
             .then((json) => {
                 // Convert the object to an array of key-value pairs
