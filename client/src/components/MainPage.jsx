@@ -36,7 +36,25 @@ const getTodayDate =()=> {
 
     return `${year}-${month}-${day}`;
 }
+
+function formatNumberWithComma(input, includeDecimals = false) {
+    const number = parseFloat(input);
   
+    if (isNaN(number)) {
+      return 'Invalid input';
+    }
+  
+    const decimalOptions = includeDecimals
+      ? { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+      : {};
+  
+    const formattedNumber = number.toLocaleString('en-US', {
+      style: 'decimal',
+      ...decimalOptions,
+    });
+  
+    return formattedNumber;
+  }
 
 
 export default function MainPage() {
@@ -268,13 +286,13 @@ export default function MainPage() {
 
     return (
         
-        <div className=" mt-6 relative ">
+        <div className=" mt-6  relative ">
         
             {/* <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1> */}
             {/* <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p> */}
 
             {/* Form Area */}
-            <div className="mt-5 to  flex items-center justify-center flex-col ">
+            <div className="mt-5  flex items-center justify-center flex-col ">
                 <section className='w-full lg:w-1/2'>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
@@ -282,7 +300,7 @@ export default function MainPage() {
                                 htmlFor={date}
                                 className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">Date: </label>
 
-                            <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} 
+                            <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} min={"1999-01-04"} max={getTodayDate()}
                             defaultValue={getTodayDate()}
                              style={{ appearance: "none"  }} // Add the appearance property here
                             className="bg-gray-50 border col border-gray-300  text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  text-black dark:text-green-400 font-medium dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required />
@@ -365,12 +383,21 @@ export default function MainPage() {
             </div>
             {/* Result */}
             {!isloading ? (
-                <div className='  text-center py-5  text-blue-950 dark:text-white '>
+                <div className='  text-center py-5 mt-10  text-blue-950 dark:text-white  flex items-center justify-center'>
 
-                {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "")  ? <p className='text-lg opacity-80'>
-         
-                {displaySrcAmount} {`${displaySrcAmount > 1 ? displayFromCurrency +"s" : displayFromCurrency}`}  ＝  <span className='text-green-600 font-semibold'>{displayTargetAmount}</span>  {`${displayTargetAmount > 1 ? displayToCurrency + "s" : displayToCurrency}`}
-                </p>:null}
+                {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "")  ? 
+                
+                <div className='block md:flex text-lg opacity-80 '>
+                     <div className=' flex  mr-2'>
+                     <div className=' text-gray-700 dark:text-gray-200 text-[25px] md:text-[25px]'>{formatNumberWithComma(displaySrcAmount)}</div>
+                     <div className=' ml-1'>{`${displaySrcAmount > 1 ? displayFromCurrency +"s" : displayFromCurrency}`}</div>
+                     </div> 
+                  ＝  
+                <div className='mx-2 text-green-600 text-[25px] font-semibold'>{formatNumberWithComma(displayTargetAmount)}</div>  
+                <div>{`${displayTargetAmount > 1 ? displayToCurrency + "s" : displayToCurrency}`}</div>
+
+
+                </div>:null}
                  
             </div>
     
