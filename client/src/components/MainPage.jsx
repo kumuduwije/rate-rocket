@@ -118,7 +118,7 @@ export default function MainPage() {
 
 
             //  response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies"
-            response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies",
+            response = await axios.get("https://rate-rocket-api.vercel.app/convertCurrencies",
                 {params:
                         {
                             date,
