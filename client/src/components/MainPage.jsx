@@ -387,7 +387,7 @@ export default function MainPage() {
             {!isloading ? (
                 <div className='  text-center py-5 mt-10  text-blue-950 dark:text-white  flex items-center justify-center'>
 
-                {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "")  ? 
+                {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "" && displaySrcAmount > 0)  ? 
                 
                 <div className='block md:flex text-lg opacity-80 '>
                      <div className=' flex  mr-2'>
