@@ -68,8 +68,8 @@ function App() {
           {/* Render MainPage if there is no errors like status ===5000 */}
          {/* {!error ? (<MainPage/>): (<div className=' text-red-500 flex justify-center'>{error}</div>)}   */}
 
-
-         <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1>
+         {/* bg-gradient-to-bl from-green-500  to-green-700  bg-clip-text text-transparent */}
+         <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px] font-[Raleway] font-normal text-green-500 capitalize">Rate Rocket</h1>
 
 
          {/* mb-[100px] md:mb-[200px] */}
