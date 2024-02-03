@@ -1,28 +1,29 @@
 
 import React, {useState,useRef} from 'react'
 import axios from "axios"
-import SyncIcon from '@mui/icons-material/Sync';
-import { styled } from '@mui/system';
+//import { styled } from '@mui/system';
 import Results from "./Results";
 //import GitHubIcon from '@mui/icons-material/GitHub';
-import { IoIosClose } from "react-icons/io";
+//import { IoIosClose } from "react-icons/io";
+import { CloseIcon } from '@chakra-ui/icons'
+import { Button, Input,Box} from "@chakra-ui/react";
 
 
 let response =""; // response global variable update in line 88
 
-const RotateIcon = styled(SyncIcon)`
-  display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
-  animation: ${({ isloading }) => (!isloading ? 'spin 1s linear infinite' : 'none')};
+// const RotateIcon = styled(SyncIcon)`
+//   display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
+//   animation: ${({ isloading }) => (!isloading ? 'spin 1s linear infinite' : 'none')};
 
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
+//   @keyframes spin {
+//     0% {
+//       transform: rotate(0deg);
+//     }
+//     100% {
+//       transform: rotate(360deg);
+//     }
+//   }
+// `;
 
 const getTodayDate =()=> {
     const today = new Date();
@@ -59,15 +60,17 @@ function formatNumberWithComma(input, includeDecimals = false) {
 
 export default function MainPage() {
 
+    
+
   
     //States
     const [date, setDate] = useState(null);
     const [sourceCurrency, setSourceCurrency] = useState("");
     const [targetCurrency, setTargetCurrency] = useState("");
-    const [amountInSourceCurrency, setAmountInSourceCurrency] = useState(0);
+    const [amountInSourceCurrency, setAmountInSourceCurrency] = useState('');
     const [amountInTargetCurrency, setAmountInTargetCurrency] = useState(0);
     // const [currencyNames, setCurrencyNames] = useState([])
-    const [isloading, setIsloading] = useState(true)
+    const [isloading, setIsloading] = useState(false)
     const [buttonText, setButtonText] = useState("Convert Currency")
     const [iconLoading, setIconLoading] = useState(true)
     const [showResult, setShowResult] = useState(false)
@@ -91,6 +94,7 @@ export default function MainPage() {
     // Create refs for source and target inputs
   const sourceInputRef = useRef(null);
   const targetInputRef = useRef(null);
+  const sourceAmountRef = useRef(null);
 
     // handleSubmit
     const handleSubmit =async (e) =>{
@@ -98,7 +102,7 @@ export default function MainPage() {
           console.log(date)
     
           setIconLoading(true)
-          setIsloading(false)
+          setIsloading(true)
           setShowResult(false)
           setButtonText("Converting...")
           
@@ -264,6 +268,12 @@ export default function MainPage() {
           if (targetInputRef.current) {
             targetInputRef.current.focus();
           }
+        }else if (field === 'sourceAmount') {
+
+          setAmountInSourceCurrency('');
+          if (sourceAmountRef.current) {
+            sourceAmountRef.current.focus();
+          }
         }
       };
 
@@ -288,32 +298,54 @@ export default function MainPage() {
 
     return (
         
+        
         <div className=" mt-6  relative ">
+        
+
+            
+
+
         
             {/* <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1> */}
             {/* <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p> */}
 
             {/* Form Area */}
             <div className="mt-5  flex items-center justify-center flex-col ">
-                <section className='w-full lg:w-1/2'>
+                <section className='w-full lg:w-1/2 '>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
-                            <label
-                                htmlFor={date}
-                                className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">Date: </label>
+                            <label htmlFor={date} className="block mb-2 text-sm font-medium  ">Date: </label>
 
-                            <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} min={"1999-01-04"} max={getTodayDate()}
+                                    <Input  onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} 
+               
+                                                id={date}
+                                                name={date}
+                                                placeholder="Select Date and Time"
+                                                size="lg"
+                                                type="date"
+                                                max={getTodayDate()}
+                                                min={"1999-01-04"}
+                                                defaultValue={getTodayDate()}
+                                                variant="filled"
+                                                focusBorderColor="green.300"
+                                                borderWidth={0.1}
+                                                required
+                                                    
+                                                />
+
+                            {/* <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} min={"1999-01-04"} max={getTodayDate()}
                             defaultValue={getTodayDate()}
                              style={{ appearance: "none"  }} // Add the appearance property here
-                            className="bg-gray-50 border col border-gray-300  text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  text-black dark:text-green-400 font-medium dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required />
+                            className="bg-gray-50 border col border-gray-300  text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  text-black dark:text-green-400 font-medium dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required /> */}
                         </div>
                         {/*Source Currency*/}
                         <div className="mb-4 relative">
-                            <label htmlFor={sourceCurrency} className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">
+                            <label htmlFor={sourceCurrency} className="block mb-2 text-sm font-medium dark:gray-500">
                                 Source Currency:
                             </label>
                             <div className="relative">
-                                <input
+
+                                {/* <input
                                 ref={sourceInputRef}
                                     required
                                     id={sourceCurrency}
@@ -323,10 +355,34 @@ export default function MainPage() {
                                     type="text"
                                     placeholder="Type source currency name: "
                                     className="bg-gray-50 border border-gray-300 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 e dark:focus:ring-green-500 dark:focus:border-green-500 pr-10" // Add pr-10 for padding-right to accommodate the close icon
+                                /> */}
+
+                                <Input
+                               
+                                    ref={sourceInputRef}
+                                    id={sourceCurrency}
+                                    name={sourceCurrency}
+                                    value={sourceInput}
+                                    required
+                                    onChange={(e) => handleChange(e.target.value, "source")}
+                                    type="text"
+                    
+                                    variant="filled"
+                                    colorScheme={"teal"}
+                                    placeholder="Country Name or Code"
+                                    size="lg"
+                                    fontSize={14}
+                                    focusBorderColor="green.300"
+                                    borderWidth={0.1}
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}
                                 />
+
                                 {sourceInput && ( // Render the close icon only when sourceInput is not empty
-                                    <IoIosClose
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
+                                    <CloseIcon
+                                    color={"teal"}
+                                    w={2.5}
+                                    h={2.5}
+                                        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-[25px]  hover:cursor-pointer"
                                         onClick={() => handleClear("source")} // Clear the sourceInput when the close icon is clicked
                                     />
                                 )}
@@ -339,11 +395,11 @@ export default function MainPage() {
                             {/*target Currency*/}
 
                         <div className="mb-4 relative">
-                            <label htmlFor={targetCurrency} className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">
+                            <label htmlFor={targetCurrency} className="block mb-2 text-sm font-medium  dark:gray-500">
                                 Target Currency:
                             </label>
                             <div className="relative">
-                                <input
+                                {/* <input
                                     ref={targetInputRef}
                                     required
                                     id={targetCurrency}
@@ -353,10 +409,32 @@ export default function MainPage() {
                                     type="text"
                                     placeholder="Type target currency name: "
                                     className="bg-gray-50 border border-gray-300 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 e dark:focus:ring-green-500 dark:focus:border-green-500 pr-10" // Add pr-10 for padding-right to accommodate the close icon
+                                /> */}
+
+                                <Input
+                                   required
+                                    ref={targetInputRef}
+                                    id={targetCurrency}
+                                    name={targetCurrency}
+                                    value={targetInput}
+                                    onChange={(e) => handleChange(e.target.value, "target")}
+                                    type="text"
+                                    variant="filled"
+                                    colorScheme={"teal"}
+                                    placeholder="Country Name or Code"
+                                    size="lg"
+                                    fontSize={14}
+                                    focusBorderColor="green.300"
+                                    borderWidth={0.1}
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}
                                 />
+
                                 {targetInput && ( // Render the close icon only when targetInput is not empty
-                                    <IoIosClose
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
+                                    <CloseIcon
+                                     color={"teal"}
+                                    w={2.5}
+                                    h={2.5}
+                                        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
                                         onClick={() => handleClear("target")} // Clear the targetInput when the close icon is clicked
                                     />
                                 )}
@@ -365,19 +443,60 @@ export default function MainPage() {
 
                         <Results targetInput = {targetInput} targetSearchResult={targetSearchResult} setTargetSearchResult={setTargetSearchResult} setTargetInput ={setTargetInput} target={true} setTargetCurrency={setTargetCurrency} isLoadingResults={isLoadingResults}/>
 
-                        <div className="mb-4">
+                        <div className=" relative mb-4">
                             <label
                                 htmlFor={amountInSourceCurrency}
                                 name={amountInSourceCurrency}
-                                className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">Amount in Source Currency:</label>
+                                className="block mb-2 text-sm font-medium "> Amount in Source Currency:</label>
 
-                            <input onChange={(e)=>setAmountInSourceCurrency(e.target.value)} type="number" min={1} id={amountInSourceCurrency}
+                                <div className=' relative'>
+                                <Input
+                                   required
+                                    ref={sourceAmountRef}
+                                    id={amountInSourceCurrency}
+                                    name={amountInSourceCurrency}
+                                     value={amountInSourceCurrency}
+                                    onChange={(e)=>setAmountInSourceCurrency(e.target.value)}
+                                    type="number"
+                                    min={1}
+                                    focusBorderColor="green.300"
+                                    borderWidth={0.1}
+                                    variant="filled"
+                                    colorScheme={"teal"}
+                                    placeholder="Example: 250"
+                                    size="lg"
+                                    fontSize={14}
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}
+                                />
+
+                                {amountInSourceCurrency && ( // Render the close icon only when targetInput is not empty
+                                    <CloseIcon
+                                    w={2.5}
+                                    h={2.5}
+                                    color={"teal"}
+                                        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
+                                        onClick={() => handleClear("sourceAmount")} // Clear the targetInput when the close icon is clicked
+                                    />
+                                )}
+                                </div>
+
+                            {/* <input onChange={(e)=>setAmountInSourceCurrency(e.target.value)} type="number" min={1} id={amountInSourceCurrency}
                             name={amountInSourceCurrency}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Example: 250" required />
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Example: 250" required /> */}
                         </div>
 
                         
-                        <button onClick={handleButtonClick} className='bg-green-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-700 hover:cursor-pointer'>{buttonText} {iconLoading ? <RotateIcon isloading={isloading}></RotateIcon>: ""}</button>
+                        {/* <button onClick={handleButtonClick} className='bg-green-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-700 hover:cursor-pointer'>{buttonText} {iconLoading ? <RotateIcon isloading={isloading}></RotateIcon>: ""}</button> */}
+                        <Button
+                            type='submit'
+                            isLoading={isloading}
+                            loadingText="Converting.."
+                            colorScheme="whatsapp"
+                            spinnerPlacement="end"
+                            onClick={handleButtonClick}
+                            >
+                            {buttonText}
+                        </Button>
                 
 
                     </form>
@@ -385,13 +504,13 @@ export default function MainPage() {
             </div>
             {/* Result */}
             {!isloading ? (
-                <div className='  text-center py-5 mt-10  text-blue-950 dark:text-white  flex items-center justify-center'>
+                <div className='  text-center py-5 mt-10    flex items-center justify-center'>
 
                 {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "" && displaySrcAmount > 0)  ? 
                 
                 <div className='block md:flex text-lg opacity-80 '>
                      <div className=' flex  mr-2'>
-                     <div className=' text-gray-700 dark:text-gray-200 text-[25px] md:text-[25px]'>{formatNumberWithComma(displaySrcAmount)}</div>
+                     <Box className='   text-[25px] md:text-[25px]'>{formatNumberWithComma(displaySrcAmount)}</Box>
                      <div className=' ml-1'>{`${displaySrcAmount > 1 ? displayFromCurrency +"s" : displayFromCurrency}`}</div>
                      </div> 
                   ＝  
