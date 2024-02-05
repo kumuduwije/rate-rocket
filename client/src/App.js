@@ -7,8 +7,11 @@ import axios from 'axios';
 import { ChakraUIProvider } from "../src/chakra-ui/chakra-ui.provider";
 import {IconButton,useColorMode,CircularProgress, Tooltip} from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import ChakraAutoComplete from './components/ChakraAutoComplete';
+import { useCurrencyContext } from './Context/CurrencyContext'
 
 function App() {
+  const { selectedValue } = useCurrencyContext();
 
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -104,6 +107,8 @@ function App() {
             {!loading && error && <div className='fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-red-500'>{error}</div>}
             {!isOnline ? <div className='text-red-500 text-lg text-center fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 '>{"Please connect to the internet "}</div>: "" }
 
+
+            {/* <p>Selected Value: {selectedValue}</p> */}
       
       
   
