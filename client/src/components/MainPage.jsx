@@ -2,11 +2,11 @@
 import React, {useState,useRef,useEffect} from 'react'
 import axios from "axios"
 //import { styled } from '@mui/system';
-import Results from "./Results";
+//import Results from "./Results";
 //import GitHubIcon from '@mui/icons-material/GitHub';
 //import { IoIosClose } from "react-icons/io";
 import { CloseIcon } from '@chakra-ui/icons'
-import { Button, Input,Box,Stack, Image, Text} from "@chakra-ui/react";
+import { Button, Input,Box,Stack, Image, Text,InputRightElement,IconButton, InputGroup} from "@chakra-ui/react";
 import {
     AutoComplete,
     AutoCompleteInput,
@@ -69,6 +69,11 @@ function formatNumberWithComma(input, includeDecimals = false) {
 
 export default function MainPage() {
 
+
+    // states for currency keys
+    const [sourceKey, setSourceKey] = useState(Math.random());
+    const [targetKey, setTargetKey] = useState(Math.random());
+
     
 
   
@@ -85,7 +90,7 @@ export default function MainPage() {
     // const [currencyNames, setCurrencyNames] = useState([])
     const [isloading, setIsloading] = useState(false)
     const [buttonText, setButtonText] = useState("Convert Currency")
-    const [iconLoading, setIconLoading] = useState(true)
+    //const [iconLoading, setIconLoading] = useState(true)
     const [showResult, setShowResult] = useState(false)
     // Update UI States
     const [displaySrcAmount, setDisplaySrcAmount] = useState('');
@@ -121,7 +126,7 @@ export default function MainPage() {
           e.preventDefault() 
           //console.log(date)
     
-          setIconLoading(true)
+         // setIconLoading(true)
           setIsloading(true)
           setShowResult(false)
           setButtonText("Converting...")
@@ -161,7 +166,7 @@ export default function MainPage() {
 
                     //setDisplayFromCurrency(sourceCurrency)
                     setIsloading(false)
-                    setIconLoading(false)
+                    //setIconLoading(false)
     
                     
                     setShowResult(true)
@@ -192,7 +197,7 @@ export default function MainPage() {
                 }else{
                     console.log("You entered data is wrong")
                     setButtonText("Convert Currency")
-                    setIconLoading(false)
+                    //setIconLoading(false)
                     setIsloading(false)
                     
                 }
@@ -241,6 +246,8 @@ export default function MainPage() {
  
     }
 
+
+    //To be removed
     const fetchData = (value, field) => {
         setIsLoadingResults(true); 
          //fetch("http://localhost:4000/getAllCurrencies")
@@ -339,33 +346,95 @@ export default function MainPage() {
     // }
 
     const handleClear = (field) => {
-        if (field === 'source') {
-          setSourceInput('');
-          setSourceCurrency('')
-      
-          
-          console.log( sourceInputRef.current.value)
-          sourceInputRef.current.value = null
 
-          
-          if (sourceInputRef.current) {
+        console.log("Clearing field:", field);
+
+        if(field === "src"){
+            setSourceCurrency("");
+            setSourceInput("");
+            setSourceKey(Math.random());
+
+            if(sourceInputRef.current){
+                sourceInputRef.current.focus();
+                console.log("Focusing sourceInputRef");
+            }else{
+                console.log("sourcetInputRef not avaliable");
+            }
+        }
+        
+        else if(field === "target"){
+            setTargetInput("");
+            setTargetCurrency("");
+            setTargetKey(Math.random());
+
+            if (targetInputRef.current ) {
+                targetInputRef.current.focus();
+                console.log("Focusing targetInputRef");
+            }else{
+                console.log("targetInputRef not avaliable");
+            }
       
-            sourceInputRef.current.focus();
-          }
-        } else if (field === 'target') {
-          setTargetInput('');
-          if (targetInputRef.current) {
-            targetInputRef.current.focus();
-          }
-        }else if (field === 'sourceAmount') {
+
+       }else if (field === 'sourceAmount') {
 
           setAmountInSourceCurrency('');
           if (sourceAmountRef.current) {
             sourceAmountRef.current.focus();
           }
         }
+
+
+        // if (field === 'source') {
+        //   setSourceInput('');
+        //   setSourceCurrency('')
+      
+          
+        //   console.log( sourceInputRef.current.value)
+        //   sourceInputRef.current.value = null
+
+          
+        //   if (sourceInputRef.current) {
+      
+        //     sourceInputRef.current.focus();
+        //   }
+        // } else if (field === 'target') {
+        //   setTargetInput('');
+        //   if (targetInputRef.current) {
+        //     targetInputRef.current.focus();
+        //   }
+        // }else if (field === 'sourceAmount') {
+
+        //   setAmountInSourceCurrency('');
+        //   if (sourceAmountRef.current) {
+        //     sourceAmountRef.current.focus();
+        //   }
+        // }
       };
 
+      const handleInputValueChange = (event, field) => {
+
+        if(field === 'src') {
+            const value = event.target.value;
+                if (value === '') {
+                    
+                    setSourceCurrency("")
+
+                    setSourceKey(Math.random());
+            
+                }
+        }
+
+        if(field === 'target') {
+            const value = event.target.value;
+                if (value === '') {
+                    
+                    setTargetCurrency("")
+
+                    setTargetKey(Math.random());
+            
+                }
+        }
+      };
 
 
 
@@ -380,9 +449,13 @@ export default function MainPage() {
 
 
          //Setting source currency name display
-         const seperatedSrcCurrencyName = completeSrcCurrencyName.match(currencyNameRegex);
-         const displaySrcCurrencyName = seperatedSrcCurrencyName ? seperatedSrcCurrencyName[1].trim() : null;
-         setDisplayFromCurrency(displaySrcCurrencyName)
+         if(targetCurrency){
+
+             const seperatedSrcCurrencyName = completeSrcCurrencyName.match(currencyNameRegex);
+             const displaySrcCurrencyName = seperatedSrcCurrencyName ? seperatedSrcCurrencyName[1].trim() : null;
+            setDisplayFromCurrency(displaySrcCurrencyName)
+         }
+         
 
 
          //Setting target currency name display
@@ -420,15 +493,12 @@ export default function MainPage() {
         
       };
 
+      
+
     return (
         
         
         <div className=" mt-6  relative ">
-        
-
-            
-
-
         
             {/* <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1> */}
             {/* <p className="lg:mx-32 opacity-30 py-6">Welcome to "Rate Rocket" This application allows you to easily convert currencies based on the latest exchange rates. Rate Rocket is a powerful and user-friendly currency converter app that simplifies the process of converting currencies for travelers, business professionals, and anyone dealing with international transactions. With its sleek design and real-time exchange rate data, Rate Rocket ensures that you stay on top of currency conversions with ease and accuracy.</p> */}
@@ -492,12 +562,43 @@ export default function MainPage() {
 
                                 <Stack direction="column">
                                     {/* <Text>Basic </Text> */}
-                                    <AutoComplete rollNavigation  onChange={(e) => {handleAutoCompleteChange(e,"src")}} variant="filled" >
-                                    <AutoCompleteInput   onChange={(e) => {setSourceInput(e.target.value)}} ref={sourceInputRef} variant="filled" size="lg" placeholder="Country Name or Code" fontSize={14}
+                                    <AutoComplete  rollNavigation key={sourceKey}   onChange={(e) => {handleAutoCompleteChange(e,"src")}} variant="filled" >
+                                    <InputGroup>
+
+                                    <AutoCompleteInput   onChange={(e)=>handleInputValueChange(e,"src")} ref={sourceInputRef} variant="filled" size="lg" placeholder="Country Name or Code" fontSize={14}
                                     focusBorderColor="green.300"
                                     borderWidth={0.1}
                                     _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }} autoFocus  required/>
-                                    <AutoCompleteList>
+
+
+                                     {sourceCurrency  && (
+                                            <InputRightElement>
+                                            <IconButton
+                                            className='  top-1'
+                                                variant='none'
+                                                colorScheme='teal'
+                                                aria-label='clear source currency'
+                                                color={"teal"}
+                                                fontSize={"10"}
+                                                icon={<CloseIcon />}
+                                                onClick={() =>handleClear("src")} 
+                                                />
+                                                {/* <CloseIcon
+                                                color={"teal"}
+                                                w={2.5}
+                                                h={2.5}
+                                                
+                                                className="text-[25px] hover:cursor-pointer"
+                                                onClick={handleClearInput} // Clear the sourceInput when the close icon is clicked
+                                                /> */}
+                                            </InputRightElement>
+                                            )}
+
+                                    </InputGroup>
+                                    
+
+                                    
+                                    <AutoCompleteList >
                                         {currencies.map((currency) => (
                                         <AutoCompleteItem
                                             key={currency.code}
@@ -506,7 +607,7 @@ export default function MainPage() {
                                         
                                             textTransform="capitalize"
                                         >
-                                            {/* <Avatar size="sm"  name={currency.name} src={"https://flagsapi.com/IN/flat/64.png"} /> */}
+                                          
                                             <Image
                                             src={currency.imgURL}
                                             fallbackSrc='https://via.placeholder.com/32'
@@ -524,7 +625,7 @@ export default function MainPage() {
                                     </AutoComplete>
                                 </Stack>
 
-                                {sourceCurrency != ""  && ( // Render the close icon only when sourceInput is not empty
+                                {/* {sourceCurrency != ""  && ( // Render the close icon only when sourceInput is not empty
                                     <CloseIcon
                                     color={"teal"}
                                     w={2.5}
@@ -532,7 +633,7 @@ export default function MainPage() {
                                         className="absolute right-5 top-1/2 transform -translate-y-1/2 text-[25px]  hover:cursor-pointer"
                                         onClick={() => handleClear("source")} // Clear the sourceInput when the close icon is clicked
                                     />
-                                )}
+                                )} */}
 
                              
                                
@@ -572,11 +673,41 @@ export default function MainPage() {
 
                                 <Stack direction="column">
                                     {/* <Text>Basic </Text> */}
-                                    <AutoComplete rollNavigation onChange={(e) => {handleAutoCompleteChange(e,"target")}} variant="filled" >
-                                    <AutoCompleteInput variant="filled" size="lg" placeholder="Country Name or Code" fontSize={14}
+                                    <AutoComplete    key={targetKey} rollNavigation onChange={(e) => {handleAutoCompleteChange(e,"target")}} variant="filled" >
+                                    <InputGroup  >
+                                    <AutoCompleteInput   onChange={(e)=>handleInputValueChange(e,"target")} ref={targetInputRef} variant="filled" size="lg" placeholder="Country Name or Code"  fontSize={14}
                                     focusBorderColor="green.300"
                                     borderWidth={0.1}
-                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}  required/>
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}  required autoFocus={targetInputRef.current} />
+
+                                    {targetCurrency  && (
+                                            <InputRightElement>
+                                            <IconButton
+                                            className='  top-1'
+                                                variant='none'
+                                                colorScheme='teal'
+                                                aria-label="clear target currency"
+                                                color={"teal"}
+                                                fontSize={"10"}
+                                                icon={<CloseIcon />}
+                                                onClick={ ()=>handleClear("target")} 
+                                                />
+                                                {/* <CloseIcon
+                                                color={"teal"}
+                                                w={2.5}
+                                                h={2.5}
+                                                
+                                                className="text-[25px] hover:cursor-pointer"
+                                                onClick={handleClearInput} // Clear the sourceInput when the close icon is clicked
+                                                /> */}
+                                            </InputRightElement>
+                                            )}
+
+
+                                    </InputGroup>
+
+                                    
+
                                     <AutoCompleteList>
                                         {currencies.map((currency) => (
                                         <AutoCompleteItem
@@ -604,15 +735,7 @@ export default function MainPage() {
                                     </AutoComplete>
                                 </Stack>
 
-                                {targetInput && ( // Render the close icon only when targetInput is not empty
-                                    <CloseIcon
-                                     color={"teal"}
-                                    w={2.5}
-                                    h={2.5}
-                                        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
-                                        onClick={() => handleClear("target")} // Clear the targetInput when the close icon is clicked
-                                    />
-                                )}
+                
                             </div>
                         </div>
 
@@ -625,6 +748,7 @@ export default function MainPage() {
                                 className="block mb-2 text-sm font-medium "> Amount in Source Currency:</label>
 
                                 <div className=' relative'>
+                                <InputGroup>
                                 <Input
                                    required
                                     ref={sourceAmountRef}
@@ -644,15 +768,34 @@ export default function MainPage() {
                                     _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}
                                 />
 
+                                <InputRightElement>
+
+                                
                                 {amountInSourceCurrency && ( // Render the close icon only when targetInput is not empty
-                                    <CloseIcon
-                                    w={2.5}
-                                    h={2.5}
-                                    color={"teal"}
-                                        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
+                                <IconButton
+
+                                        className='  top-1'
+                                        variant='none'
+                                        colorScheme='teal'
+                                        aria-label='clear target Amount'
+                                        color={"teal"}
+                                        fontSize={"10"}
+                                        icon={<CloseIcon />}
                                         onClick={() => handleClear("sourceAmount")} // Clear the targetInput when the close icon is clicked
-                                    />
+                                
+                                >
+                                    
+                                    
+                            
+                                
+                                    </IconButton>
                                 )}
+                                
+                                </InputRightElement>
+
+                                </InputGroup>
+
+                                
                                 </div>
 
                             {/* <input onChange={(e)=>setAmountInSourceCurrency(e.target.value)} type="number" min={1} id={amountInSourceCurrency}
@@ -681,7 +824,7 @@ export default function MainPage() {
             {!isloading ? (
                 <div className='  text-center py-5 mt-10    flex items-center justify-center'>
 
-                { (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "" && displaySrcAmount > 0)  ? 
+                { (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "" && displaySrcAmount > 0 )  ? 
                 
                 <div className='block md:flex text-lg opacity-80 '>
                      <div className=' flex  mr-2'>
