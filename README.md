@@ -1,6 +1,27 @@
 # Rate Rocket - Currency Converter App
 <p>Rate Rocket is a powerful and user-friendly currency converter application that simplifies the process of converting currencies based on the latest exchange rates. Whether you're a traveler, business professional, or dealing with international transactions, Rate Rocket ensures quick and accurate currency conversions. With its sleek design and real-time exchange rate data, Rate Rocket takes the hassle out of currency conversion.</p>
 
+## Technologies
+<div >
+  <div>
+    <h4> Frontend</h4>
+    <li>React.js</li>
+    <li>Chakra UI ⚡️ </li>
+    <li>Tailwind CSS </li>
+  </div>
+
+  <div>
+    <h4>Backend</h4>
+    <li>Node.js</li>
+    <li>Express.js</li>
+    <li>CORS for middleware</li>
+  </div>
+</div>
+
+
+
+
+
 
 <h3 align="center">Interface</h3>
   <p align="center" width="100%">
@@ -25,6 +46,8 @@
     <img width="600" alt="Light Mode" src="https://github.com/kumuduwije/rate-rocket/assets/54832037/ee6ffaa3-d40f-4077-8ac0-d05c50c2bb6c">
 
 </p>
+
+
 
 
 
