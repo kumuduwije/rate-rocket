@@ -1,4 +1,4 @@
-import { extendTheme, ThemeConfig } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
 
 //
 //
@@ -18,7 +18,21 @@ const config = {
 };
 
 export const chakraCustomTheme = extendTheme({
-  config
+  config,
+
+  colors: {
+    light: {
+      500: '#38a169', // Light green color
+    },
+  },
+  styles: {
+    global: (props:any) => ({
+      body: {
+        bg: props.colorMode === 'light' ? '#F9F9F9' : 'gray.800', // Use light green in light mode
+      },
+    }),
+  },
+  
 });
 
 //

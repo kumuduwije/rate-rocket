@@ -20,20 +20,6 @@ import {
 
 let response =""; // response global variable update in line 88
 
-// const RotateIcon = styled(SyncIcon)`
-//   display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
-//   animation: ${({ isloading }) => (!isloading ? 'spin 1s linear infinite' : 'none')};
-
-//   @keyframes spin {
-//     0% {
-//       transform: rotate(0deg);
-//     }
-//     100% {
-//       transform: rotate(360deg);
-//     }
-//   }
-// `;
-
 const getTodayDate =()=> {
     const today = new Date();
     const year = today.getFullYear();
@@ -98,13 +84,12 @@ export default function MainPage() {
     const [displayTargetAmount, setDisplayTargetAmount] = useState('');
     const [displayToCurrency, setDisplayToCurrency] = useState('');
 
-    const [sourceInput, setSourceInput] = useState("");
-    const [sourceSearchResult, setSourceSearchResult] = useState([])
+    //const [sourceInput, setSourceInput] = useState("");
+    //const [sourceSearchResult, setSourceSearchResult] = useState([])
+    //const [targetInput, setTargetInput] = useState("");
+    //const [targetSearchResult, setTargetSearchResult] = useState([])
+    //const [isLoadingResults, setIsLoadingResults] = useState(false); //For search suggestions
 
-    const [targetInput, setTargetInput] = useState("");
-    const [targetSearchResult, setTargetSearchResult] = useState([])
-
-    const [isLoadingResults, setIsLoadingResults] = useState(false); //For search suggestions
     const [errorMessage, setErrorMessage] = useState(null);
 
     
@@ -116,9 +101,8 @@ export default function MainPage() {
 
   useEffect(() => {
     // Log the value of amountInTargetCurrency when it changes
-    console.log("amountInTargetCurrency in useEffect: " + amountInTargetCurrency);
+    // console.log("amountInTargetCurrency in useEffect: " + amountInTargetCurrency);
   }, [amountInTargetCurrency]);
-
 
 
     // handleSubmit
@@ -130,6 +114,7 @@ export default function MainPage() {
           setIsloading(true)
           setShowResult(false)
           setButtonText("Converting...")
+          //setShowResult(false)
           
             
         try{
@@ -161,7 +146,8 @@ export default function MainPage() {
                     
                     //** IMPORTANT LOGS */
                     // console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
-                console.log("convertCurrencies response : "+response.data)
+                //console.log("convertCurrencies response : "+response.data)
+
                 if(response.data !== null || response){
 
                     //setDisplayFromCurrency(sourceCurrency)
@@ -173,26 +159,28 @@ export default function MainPage() {
                     setButtonText("Convert Currency")
                     setAmountInTargetCurrency(response.data.toFixed(2));
                     
-                    console.log("amountInTargetCurrency"+amountInTargetCurrency)
-                    console.log("Data recived")
+                    //console.log("amountInTargetCurrency"+amountInTargetCurrency)
+                    
                     //setDisplayTargetAmount(response.data);
 
-                    console.table({
-                        date:date,
-                        amountInSourceCurrency:amountInSourceCurrency,
-                        amountInTargetCurrency:amountInTargetCurrency,
-                        displaySrcAmount:displaySrcAmount,
-                        displayTargetAmount:displayTargetAmount,
-                        displayFromCurrency:displayFromCurrency,
-                        displayToCurrency:displayToCurrency,
-                        targetCurrency:targetCurrency,
-                        sourceCurrency:sourceCurrency
-                    })
+                    // console.table({
+                    //     date:date,
+                    //     amountInSourceCurrency:amountInSourceCurrency,
+                    //     amountInTargetCurrency:amountInTargetCurrency,
+                    //     displaySrcAmount:displaySrcAmount,
+                    //     displayTargetAmount:displayTargetAmount,
+                    //     displayFromCurrency:displayFromCurrency,
+                    //     displayToCurrency:displayToCurrency,
+                    //     targetCurrency:targetCurrency,
+                    //     sourceCurrency:sourceCurrency
+                    // })
 
                     // Update the result display values directly without using 'showResult' state
                     setDisplaySrcAmount(amountInSourceCurrency);
                     setDisplayTargetAmount(response.data.toFixed(2));
                     //setDisplayToCurrency(targetCurrency);
+
+                    setShowResult(true)
     
                 }else{
                     console.log("You entered data is wrong")
@@ -241,59 +229,15 @@ export default function MainPage() {
               }
             }
 
-        
-        
- 
     }
 
 
-    //To be removed
-    const fetchData = (value, field) => {
-        setIsLoadingResults(true); 
-         //fetch("http://localhost:4000/getAllCurrencies")
-        //fetch("https://rate-rocket.onrender.com/getAllCurrencies")
-        fetch("https://rate-rocket-api.vercel.app/getAllCurrencies")
-            .then((response) => response.json())
-            .then((json) => {
-                // Convert the object to an array of key-value pairs
-                const currenciesArray = Object.entries(json);
-
-                // Filter the array based on the currency name and code (value)
-                const result = currenciesArray.filter(([currencyCode, currencyName]) => {
-                    //console.log(`currencyCodes ${currencyCode}`)
-                 
-                    return (value && currencyName.toLowerCase().includes(value.toLowerCase())  || value && currencyCode.toLowerCase().includes(value.toLowerCase()));
-                });
-
-      
-
-                //console.log(result)
-
-                if(field === "src"){
-                    setSourceSearchResult(result)
-                    //setDisplayFromCurrency(result);
-                    
-                    //console.log("source result 196: "+ result);
-                }
-                else if (field === "target"){
-                    setTargetSearchResult(result)
-                    //setDisplayToCurrency(result);
-              
-                }
-
-
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-
-            }).finally(() => {
-                setIsLoadingResults(false); // Set loading to false when data fetching is complete
-              });
-    };
+    
 
     const [currencies, setCurrencies] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
+    //to be removed
+    //const [loading, setLoading] = useState(true);
+    //const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(()=>{
         const fetchCurrencies = async ()=>{
@@ -309,6 +253,8 @@ export default function MainPage() {
                         imgURL:`https://flagcdn.com/w40/${code.slice(0,-1).toLowerCase()}.webp`
                     }));
 
+                    
+
                     setCurrencies(currencyData);
                     //console.log(currencyData)
 
@@ -318,7 +264,7 @@ export default function MainPage() {
                     console.log(error);
 
             }finally{
-                setLoading(false);
+                //setLoading(false);
             }
         }
      
@@ -347,31 +293,29 @@ export default function MainPage() {
 
     const handleClear = (field) => {
 
-        console.log("Clearing field:", field);
-
         if(field === "src"){
             setSourceCurrency("");
-            setSourceInput("");
+            //setSourceInput("");
             setSourceKey(Math.random());
 
             if(sourceInputRef.current){
                 sourceInputRef.current.focus();
-                console.log("Focusing sourceInputRef");
+                //console.log("Focusing sourceInputRef");
             }else{
-                console.log("sourcetInputRef not avaliable");
+                //console.log("sourcetInputRef not avaliable");
             }
         }
         
         else if(field === "target"){
-            setTargetInput("");
+            //setTargetInput("");
             setTargetCurrency("");
             setTargetKey(Math.random());
 
             if (targetInputRef.current ) {
                 targetInputRef.current.focus();
-                console.log("Focusing targetInputRef");
+                //console.log("Focusing targetInputRef");
             }else{
-                console.log("targetInputRef not avaliable");
+                //console.log("targetInputRef not avaliable");
             }
       
 
@@ -382,33 +326,6 @@ export default function MainPage() {
             sourceAmountRef.current.focus();
           }
         }
-
-
-        // if (field === 'source') {
-        //   setSourceInput('');
-        //   setSourceCurrency('')
-      
-          
-        //   console.log( sourceInputRef.current.value)
-        //   sourceInputRef.current.value = null
-
-          
-        //   if (sourceInputRef.current) {
-      
-        //     sourceInputRef.current.focus();
-        //   }
-        // } else if (field === 'target') {
-        //   setTargetInput('');
-        //   if (targetInputRef.current) {
-        //     targetInputRef.current.focus();
-        //   }
-        // }else if (field === 'sourceAmount') {
-
-        //   setAmountInSourceCurrency('');
-        //   if (sourceAmountRef.current) {
-        //     sourceAmountRef.current.focus();
-        //   }
-        // }
       };
 
       const handleInputValueChange = (event, field) => {
@@ -416,9 +333,7 @@ export default function MainPage() {
         if(field === 'src') {
             const value = event.target.value;
                 if (value === '') {
-                    
                     setSourceCurrency("")
-
                     setSourceKey(Math.random());
             
                 }
@@ -436,39 +351,40 @@ export default function MainPage() {
         }
       };
 
-
-
     const handleButtonClick = () => {
+      
 
-        const currencyNameRegex = /^(.*?)\s?\((.*?)\)$/;
-
-        setDisplaySrcAmount(amountInSourceCurrency)
+        const currencyNameRegex = /^(.*?)\s?\((.*?)\)$/;  
         //setDisplayFromCurrency(sourceInput)
         setDisplayTargetAmount(amountInTargetCurrency)
         //setDisplayToCurrency(targetInput)
 
 
          //Setting source currency name display
-         if(targetCurrency){
+         if(sourceCurrency !== "" && targetCurrency !== ""){
 
-             const seperatedSrcCurrencyName = completeSrcCurrencyName.match(currencyNameRegex);
-             const displaySrcCurrencyName = seperatedSrcCurrencyName ? seperatedSrcCurrencyName[1].trim() : null;
+
+            const seperatedSrcCurrencyName = completeSrcCurrencyName.match(currencyNameRegex);
+            const displaySrcCurrencyName = seperatedSrcCurrencyName ? seperatedSrcCurrencyName[1].trim() : null;
             setDisplayFromCurrency(displaySrcCurrencyName)
+
+            //Setting target currency name display
+            const seperatedTargetCurrencyName = completeTargetCurrencyName.match(currencyNameRegex);
+            const displayTargetCurrencyName = seperatedTargetCurrencyName ? seperatedTargetCurrencyName[1].trim() : null;
+            setDisplayToCurrency(displayTargetCurrencyName)
+
+
+
          }
-         
-
-
-         //Setting target currency name display
-         const seperatedTargetCurrencyName = completeTargetCurrencyName.match(currencyNameRegex);
-         const displayTargetCurrencyName = seperatedTargetCurrencyName ? seperatedTargetCurrencyName[1].trim() : null;
-         setDisplayToCurrency(displayTargetCurrencyName)
-
+            //Don't display if any of input fields is empty
+         if(sourceCurrency === "" || targetCurrency === "" || amountInSourceCurrency ==="" || displaySrcAmount < 0){
+            setShowResult(false)
+         }
       };
+
 
       const handleAutoCompleteChange = (value, inputType) => {
         //setSearchTerm(value);
-
-   
         const currencyCodeRegex = /\(([^)]+)\)/;
 
         if(inputType ==="src"){
@@ -477,11 +393,7 @@ export default function MainPage() {
             const match = value.match(currencyCodeRegex);
             const currencyCode = match ? match[1] : null;
             setSourceCurrency(currencyCode)
-
-            setCompleteSrcCurrencyName(value) // store full src name 
-
-           
-           
+            setCompleteSrcCurrencyName(value) // store full src name    
         }if(inputType ==="target"){
            
             const match = value.match(currencyCodeRegex);
@@ -493,8 +405,7 @@ export default function MainPage() {
         
       };
 
-      
-
+    
     return (
         
         
@@ -562,19 +473,19 @@ export default function MainPage() {
 
                                 <Stack direction="column">
                                     {/* <Text>Basic </Text> */}
-                                    <AutoComplete  rollNavigation key={sourceKey}   onChange={(e) => {handleAutoCompleteChange(e,"src")}} variant="filled" >
+                                    <AutoComplete   rollNavigation key={sourceKey}   onChange={(e) => {handleAutoCompleteChange(e,"src")}} variant="filled" >
                                     <InputGroup>
 
-                                    <AutoCompleteInput   onChange={(e)=>handleInputValueChange(e,"src")} ref={sourceInputRef} variant="filled" size="lg" placeholder="Country Name or Code" fontSize={14}
+                                    <AutoCompleteInput   onChange={(e)=>handleInputValueChange(e,"src")} ref={sourceInputRef}  variant="filled" size="lg" placeholder="Country Name or Code" fontSize={14}
                                     focusBorderColor="green.300"
-                                    borderWidth={0.1}
+                                    borderWidth={1}
                                     _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }} autoFocus  required/>
 
 
                                      {sourceCurrency  && (
                                             <InputRightElement>
                                             <IconButton
-                                            className='  top-1'
+                                            className='  top-1 right-2'
                                                 variant='none'
                                                 colorScheme='teal'
                                                 aria-label='clear source currency'
@@ -623,20 +534,7 @@ export default function MainPage() {
                                         ))}
                                     </AutoCompleteList>
                                     </AutoComplete>
-                                </Stack>
-
-                                {/* {sourceCurrency != ""  && ( // Render the close icon only when sourceInput is not empty
-                                    <CloseIcon
-                                    color={"teal"}
-                                    w={2.5}
-                                    h={2.5}
-                                        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-[25px]  hover:cursor-pointer"
-                                        onClick={() => handleClear("source")} // Clear the sourceInput when the close icon is clicked
-                                    />
-                                )} */}
-
-                             
-                               
+                                </Stack>    
 
                             </div>
                         </div>
@@ -677,13 +575,13 @@ export default function MainPage() {
                                     <InputGroup  >
                                     <AutoCompleteInput   onChange={(e)=>handleInputValueChange(e,"target")} ref={targetInputRef} variant="filled" size="lg" placeholder="Country Name or Code"  fontSize={14}
                                     focusBorderColor="green.300"
-                                    borderWidth={0.1}
+                                    borderWidth={1}
                                     _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}  required autoFocus={targetInputRef.current} />
 
                                     {targetCurrency  && (
                                             <InputRightElement>
                                             <IconButton
-                                            className='  top-1'
+                                            className='  top-1 right-2'
                                                 variant='none'
                                                 colorScheme='teal'
                                                 aria-label="clear target currency"
@@ -692,22 +590,12 @@ export default function MainPage() {
                                                 icon={<CloseIcon />}
                                                 onClick={ ()=>handleClear("target")} 
                                                 />
-                                                {/* <CloseIcon
-                                                color={"teal"}
-                                                w={2.5}
-                                                h={2.5}
                                                 
-                                                className="text-[25px] hover:cursor-pointer"
-                                                onClick={handleClearInput} // Clear the sourceInput when the close icon is clicked
-                                                /> */}
                                             </InputRightElement>
                                             )}
-
-
                                     </InputGroup>
 
-                                    
-
+                                
                                     <AutoCompleteList>
                                         {currencies.map((currency) => (
                                         <AutoCompleteItem
@@ -717,7 +605,7 @@ export default function MainPage() {
                                         
                                             textTransform="capitalize"
                                         >
-                                            {/* <Avatar size="sm"  name={currency.name} src={"https://flagsapi.com/IN/flat/64.png"} /> */}
+                                            
                                             <Image
                                             src={currency.imgURL}
                                             fallbackSrc='https://via.placeholder.com/32'
@@ -759,7 +647,7 @@ export default function MainPage() {
                                     type="number"
                                     min={1}
                                     focusBorderColor="green.300"
-                                    borderWidth={0.1}
+                                    borderWidth={1}
                                     variant="filled"
                                     colorScheme={"teal"}
                                     placeholder="Example: 250"
@@ -774,7 +662,7 @@ export default function MainPage() {
                                 {amountInSourceCurrency && ( // Render the close icon only when targetInput is not empty
                                 <IconButton
 
-                                        className='  top-1'
+                                        className='  top-1 right-2'
                                         variant='none'
                                         colorScheme='teal'
                                         aria-label='clear target Amount'
@@ -784,10 +672,6 @@ export default function MainPage() {
                                         onClick={() => handleClear("sourceAmount")} // Clear the targetInput when the close icon is clicked
                                 
                                 >
-                                    
-                                    
-                            
-                                
                                     </IconButton>
                                 )}
                                 
@@ -820,9 +704,11 @@ export default function MainPage() {
                     </form>
                 </section>
             </div>
+
+
             {/* Result */}
-            {!isloading ? (
-                <div className='  text-center py-5 mt-10    flex items-center justify-center'>
+            {!isloading && showResult  ? (
+                <div className=' mb-28 md:mb-0   text-center py-5 mt-10    flex items-center justify-center'>
 
                 { (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "" && displaySrcAmount > 0 )  ? 
                 
@@ -856,10 +742,10 @@ export default function MainPage() {
             </div> */}
 
             {errorMessage && (
-  <div className="text-red-500 text-center py-2">
-    Error: {errorMessage}
-  </div>
-)}
+                <div className="text-red-500 text-center py-2">
+                    Error: {errorMessage}
+                </div>
+            )}
 
 
         </div>

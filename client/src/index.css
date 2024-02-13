@@ -19,17 +19,30 @@ input:focus{
   /* border:1px solid red; */
 }
 
+
+
 /* input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-calendar-picker-indicator {
     display: none;
     -webkit-appearance: none;
 } */
 
+
+
 @media (prefers-color-scheme: dark) {
-  body{
+  /* body{
     background: #121212;
+  } */
+
+  input {
+    color-scheme: dark;
+  }
+
+  ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
   }
 }
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

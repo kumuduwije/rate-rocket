@@ -5,17 +5,20 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import axios from 'axios';
 
 import { ChakraUIProvider } from "../src/chakra-ui/chakra-ui.provider";
-import {IconButton,useColorMode,CircularProgress, Tooltip} from "@chakra-ui/react";
+import {IconButton,useColorMode, CircularProgress, Tooltip, Box} from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
-import ChakraAutoComplete from './components/ChakraAutoComplete';
-import { useCurrencyContext } from './Context/CurrencyContext'
+//import { useCurrencyContext } from './Context/CurrencyContext'
+
+
+
 
 function App() {
-  const { selectedValue } = useCurrencyContext();
+  //const { selectedValue } = useCurrencyContext();
 
   const { colorMode, toggleColorMode } = useColorMode();
-
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+ 
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -44,12 +47,14 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
+        // const response = 
+        await axios.get(
           'https://openexchangerates.org/api/currencies.json?app_id=e0438901e95a43baa1a95679b29451ee'
         );
 
         // Assuming the response data is an object with currency codes as keys
-        //const currencyList = Object.keys(response.data);
+        // const currencyList = Object.keys(response.data);
+        // console.log(currencyList ? "Service Connected" : "")
 
         // If the request is successful, set loading to false after a 3-second delay
         setTimeout(() => {
@@ -73,7 +78,9 @@ function App() {
 
   return (
     <>
-    
+
+   
+
     
           {/* Render MainPage if there is no errors like status ===5000 */}
          {/* {!error ? (<MainPage/>): (<div className=' text-red-500 flex justify-center'>{error}</div>)}   */}
@@ -83,8 +90,9 @@ function App() {
          <Tooltip label={colorMode === "light" ? "Dark mode":"Light mode"} placement='bottom'>
             <IconButton
               margin={5}
-              variant="outline"
-              colorScheme="teal"
+              variant="ghost"
+              colorScheme="green"
+              fontSize={20}
               aria-label="Send email"
               onClick={toggleColorMode}
               icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -115,13 +123,13 @@ function App() {
         </div>
 
             {/* footer */}
-            <footer className={` md:fixed  left-0 right-0 p-5  bottom-0    block md:flex items-center justify-between ${loading || !isOnline ? " max-[375px]:fixed fixed bottom-0  ":""}`}>
+            <footer className={` md:fixed   left-0 right-0 p-5  bottom-0    block md:flex items-center justify-between ${loading || !isOnline ? " fixed bottom-0":" static bottom-0  mt-20"}`}>
               
              
 
             <div className="  z[-1]  sm:text-xs md:text-sm lg:text-md text-xs">
-              <p className="text-gray-600 text-center">
-                Proudly Made In 🇱🇰 by Kumudu Wijewardena
+              <p className="text-gray-600 text-center ">
+                <span className=' mr-1'>Proudly Made In</span> 🇱🇰 <span className=' ml-1'>by Kumudu Wijewardene</span>
                 <a href="https://github.com/kumuduwije" rel="noopener noreferrer" target="_blank">
                   <GitHubIcon className="flex mb-[3px] ml-[5px] hover:cursor-pointer text-gray-400 hover:text-gray-500 dark:hover:text-gray-200" fontSize="small" />
                 </a>
@@ -134,6 +142,8 @@ function App() {
                 <div>{isOnline ? 'Online' : 'Offline'}</div>
               </div>
             </footer>
+
+                    
     </>
   );
 }
@@ -141,9 +151,11 @@ function App() {
 
 
 export default function WrappedApp() {
+
   return (
     <ChakraUIProvider>
       <App />
     </ChakraUIProvider>
+   
   );
 }
