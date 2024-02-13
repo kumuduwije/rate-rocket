@@ -5,7 +5,7 @@
 body {
   padding: 3rem;
   /* background: #F5F5F5; */
-  background-color: #F6FBF4;
+  /* background-color: #F6FBF4; */
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -19,11 +19,30 @@ input:focus{
   /* border:1px solid red; */
 }
 
+
+
+/* input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+} */
+
+
+
 @media (prefers-color-scheme: dark) {
-  body{
+  /* body{
     background: #121212;
+  } */
+
+  input {
+    color-scheme: dark;
+  }
+
+  ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
   }
 }
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

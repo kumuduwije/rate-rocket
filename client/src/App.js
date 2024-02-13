@@ -3,11 +3,22 @@ import './App.css';
 import MainPage from './components/MainPage';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import axios from 'axios';
-import CircularProgress from '@mui/material/CircularProgress';
+
+import { ChakraUIProvider } from "../src/chakra-ui/chakra-ui.provider";
+import {IconButton,useColorMode, CircularProgress, Tooltip, Box} from "@chakra-ui/react";
+import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+//import { useCurrencyContext } from './Context/CurrencyContext'
+
+
+
 
 function App() {
+  //const { selectedValue } = useCurrencyContext();
 
+  const { colorMode, toggleColorMode } = useColorMode();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+ 
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -36,12 +47,14 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
+        // const response = 
+        await axios.get(
           'https://openexchangerates.org/api/currencies.json?app_id=e0438901e95a43baa1a95679b29451ee'
         );
 
         // Assuming the response data is an object with currency codes as keys
-        const currencyList = Object.keys(response.data);
+        // const currencyList = Object.keys(response.data);
+        // console.log(currencyList ? "Service Connected" : "")
 
         // If the request is successful, set loading to false after a 3-second delay
         setTimeout(() => {
@@ -65,33 +78,58 @@ function App() {
 
   return (
     <>
+
+   
+
+    
           {/* Render MainPage if there is no errors like status ===5000 */}
          {/* {!error ? (<MainPage/>): (<div className=' text-red-500 flex justify-center'>{error}</div>)}   */}
 
+         <div className=' absolute right-0 md:right-10 top-1 '>
 
-         <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px]  font-bold text-green-500">Rate Rocket</h1>
+         <Tooltip label={colorMode === "light" ? "Dark mode":"Light mode"} placement='bottom'>
+            <IconButton
+              margin={5}
+              variant="ghost"
+              colorScheme="green"
+              fontSize={20}
+              aria-label="Send email"
+              onClick={toggleColorMode}
+              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+            />
+         </Tooltip>
+         </div>
+         {/* bg-gradient-to-bl from-green-500  to-green-700  bg-clip-text text-transparent */}
+         <h1 className=" lg:mx-32 p-5 text-center text-5xl max-[415px]:text-3xl max-[280px]:text-[25px] font-[Raleway] font-normal text-green-500 capitalize">Rate Rocket</h1>
 
 
          {/* mb-[100px] md:mb-[200px] */}
-         <div className=' mx-auto ' >
-            {loading && <p className=' text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-green-500 text-lg'><CircularProgress color="success" style={{ animationDuration: '1s' }}/></p>}
-            {(!loading && !error && isOnline )  ?<MainPage /> :"" }
-            {!loading && error && <div className='text-red-500'>{error}</div>}
-            {!isOnline ? <div className='text-red-500 text-lg text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>{"Please connect to the internet "}</div>: "" }
+         <div className=' mx-auto' >
+            {loading && (
+                  <div className='fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-green-500 text-lg'>
+                    <CircularProgress isIndeterminate color='green.300' />
+                  </div>
+              )}
 
+            {(!loading && !error && isOnline )  ?<MainPage /> :"" }
+            {!loading && error && <div className='fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-red-500'>{error}</div>}
+            {!isOnline ? <div className='text-red-500 text-lg text-center fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 '>{"Please connect to the internet "}</div>: "" }
+
+
+            {/* <p>Selected Value: {selectedValue}</p> */}
       
       
   
         </div>
 
             {/* footer */}
-            <footer className={` md:absolute left-0 right-0 p-5 mt-20 bottom-0 max-[375px]:relative   block md:flex items-center justify-between ${loading || !isOnline ? " max-[375px]:fixed absolute ":""}`}>
+            <footer className={` md:fixed   left-0 right-0 p-5  bottom-0    block md:flex items-center justify-between ${loading || !isOnline ? " fixed bottom-0":" static bottom-0  mt-20"}`}>
               
              
 
             <div className="  z[-1]  sm:text-xs md:text-sm lg:text-md text-xs">
-              <p className="text-gray-600 text-center">
-                Proudly Made In 🇱🇰 by Kumudu Wijewardena
+              <p className="text-gray-600 text-center ">
+                <span className=' mr-1'>Proudly Made In</span> 🇱🇰 <span className=' ml-1'>by Kumudu Wijewardene</span>
                 <a href="https://github.com/kumuduwije" rel="noopener noreferrer" target="_blank">
                   <GitHubIcon className="flex mb-[3px] ml-[5px] hover:cursor-pointer text-gray-400 hover:text-gray-500 dark:hover:text-gray-200" fontSize="small" />
                 </a>
@@ -104,8 +142,20 @@ function App() {
                 <div>{isOnline ? 'Online' : 'Offline'}</div>
               </div>
             </footer>
+
+                    
     </>
   );
 }
 
-export default App;
+
+
+export default function WrappedApp() {
+
+  return (
+    <ChakraUIProvider>
+      <App />
+    </ChakraUIProvider>
+   
+  );
+}

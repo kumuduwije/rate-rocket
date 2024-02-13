@@ -1,28 +1,24 @@
 
-import React, {useState,useRef} from 'react'
+import React, {useState,useRef,useEffect} from 'react'
 import axios from "axios"
-import SyncIcon from '@mui/icons-material/Sync';
-import { styled } from '@mui/system';
-import Results from "./Results";
+//import { styled } from '@mui/system';
+//import Results from "./Results";
 //import GitHubIcon from '@mui/icons-material/GitHub';
-import { IoIosClose } from "react-icons/io";
+//import { IoIosClose } from "react-icons/io";
+import { CloseIcon } from '@chakra-ui/icons'
+import { Button, Input,Box,Stack, Image, Text,InputRightElement,IconButton, InputGroup} from "@chakra-ui/react";
+import {
+    AutoComplete,
+    AutoCompleteInput,
+    AutoCompleteItem,
+    AutoCompleteList,
+  } from "@choc-ui/chakra-autocomplete";
+
+//import { CurrencyContext } from '../Context/CurrencyContext';
+
 
 
 let response =""; // response global variable update in line 88
-
-const RotateIcon = styled(SyncIcon)`
-  display: ${({ isloading }) => (!isloading ? 'inline-block' : 'none')};
-  animation: ${({ isloading }) => (!isloading ? 'spin 1s linear infinite' : 'none')};
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
 
 const getTodayDate =()=> {
     const today = new Date();
@@ -59,17 +55,28 @@ function formatNumberWithComma(input, includeDecimals = false) {
 
 export default function MainPage() {
 
+
+    // states for currency keys
+    const [sourceKey, setSourceKey] = useState(Math.random());
+    const [targetKey, setTargetKey] = useState(Math.random());
+
+    
+
   
     //States
     const [date, setDate] = useState(null);
     const [sourceCurrency, setSourceCurrency] = useState("");
     const [targetCurrency, setTargetCurrency] = useState("");
-    const [amountInSourceCurrency, setAmountInSourceCurrency] = useState(0);
+    const [amountInSourceCurrency, setAmountInSourceCurrency] = useState('');
     const [amountInTargetCurrency, setAmountInTargetCurrency] = useState(0);
+    //State of currency names
+    const [completeSrcCurrencyName, setCompleteSrcCurrencyName] = useState('');
+    const [completeTargetCurrencyName, setCompleteTargetCurrencyName] = useState('');
+
     // const [currencyNames, setCurrencyNames] = useState([])
-    const [isloading, setIsloading] = useState(true)
+    const [isloading, setIsloading] = useState(false)
     const [buttonText, setButtonText] = useState("Convert Currency")
-    const [iconLoading, setIconLoading] = useState(true)
+    //const [iconLoading, setIconLoading] = useState(true)
     const [showResult, setShowResult] = useState(false)
     // Update UI States
     const [displaySrcAmount, setDisplaySrcAmount] = useState('');
@@ -77,13 +84,12 @@ export default function MainPage() {
     const [displayTargetAmount, setDisplayTargetAmount] = useState('');
     const [displayToCurrency, setDisplayToCurrency] = useState('');
 
-    const [sourceInput, setSourceInput] = useState("");
-    const [sourceSearchResult, setSourceSearchResult] = useState([])
+    //const [sourceInput, setSourceInput] = useState("");
+    //const [sourceSearchResult, setSourceSearchResult] = useState([])
+    //const [targetInput, setTargetInput] = useState("");
+    //const [targetSearchResult, setTargetSearchResult] = useState([])
+    //const [isLoadingResults, setIsLoadingResults] = useState(false); //For search suggestions
 
-    const [targetInput, setTargetInput] = useState("");
-    const [targetSearchResult, setTargetSearchResult] = useState([])
-
-    const [isLoadingResults, setIsLoadingResults] = useState(false); //For search suggestions
     const [errorMessage, setErrorMessage] = useState(null);
 
     
@@ -91,16 +97,24 @@ export default function MainPage() {
     // Create refs for source and target inputs
   const sourceInputRef = useRef(null);
   const targetInputRef = useRef(null);
+  const sourceAmountRef = useRef(null);
+
+  useEffect(() => {
+    // Log the value of amountInTargetCurrency when it changes
+    // console.log("amountInTargetCurrency in useEffect: " + amountInTargetCurrency);
+  }, [amountInTargetCurrency]);
+
 
     // handleSubmit
     const handleSubmit =async (e) =>{
           e.preventDefault() 
-          console.log(date)
+          //console.log(date)
     
-          setIconLoading(true)
-          setIsloading(false)
+         // setIconLoading(true)
+          setIsloading(true)
           setShowResult(false)
           setButtonText("Converting...")
+          //setShowResult(false)
           
             
         try{
@@ -118,7 +132,7 @@ export default function MainPage() {
 
 
             //  response = await axios.get("https://rate-rocket.onrender.com/convertCurrencies"
-            response = await axios.get("https://rate-rocket-api.vercel.app/convertCurrencies",
+            axios.get("https://rate-rocket-api.vercel.app/convertCurrencies",
                 {params:
                         {
                             date,
@@ -127,25 +141,68 @@ export default function MainPage() {
                             amountInSourceCurrency
                         }
                 })
-
-            console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
-            console.log("convertCurrencies response : "+response.data)
-            
-            if(response.data !== null || response){
-
-                setIsloading(false)
-                setIconLoading(false)
-                setAmountInTargetCurrency(response.data.toFixed(2));
-                setDisplayTargetAmount(response.data.toFixed(2));
-                setShowResult(true)
-                setButtonText("Convert Currency")
-            }else{
-                console.log("You entered data is wrong")
-                setButtonText("Convert Currency")
-                setIconLoading(false)
-                setIsloading(false)
                 
-            }
+                .then((response)=>{
+                    
+                    //** IMPORTANT LOGS */
+                    // console.log("Gathered data:"+date,sourceCurrency,targetCurrency,amountInSourceCurrency)
+                //console.log("convertCurrencies response : "+response.data)
+
+                if(response.data !== null || response){
+
+                    //setDisplayFromCurrency(sourceCurrency)
+                    setIsloading(false)
+                    //setIconLoading(false)
+    
+                    
+                    setShowResult(true)
+                    setButtonText("Convert Currency")
+                    setAmountInTargetCurrency(response.data.toFixed(2));
+                    
+                    //console.log("amountInTargetCurrency"+amountInTargetCurrency)
+                    
+                    //setDisplayTargetAmount(response.data);
+
+                    // console.table({
+                    //     date:date,
+                    //     amountInSourceCurrency:amountInSourceCurrency,
+                    //     amountInTargetCurrency:amountInTargetCurrency,
+                    //     displaySrcAmount:displaySrcAmount,
+                    //     displayTargetAmount:displayTargetAmount,
+                    //     displayFromCurrency:displayFromCurrency,
+                    //     displayToCurrency:displayToCurrency,
+                    //     targetCurrency:targetCurrency,
+                    //     sourceCurrency:sourceCurrency
+                    // })
+
+                    // Update the result display values directly without using 'showResult' state
+                    setDisplaySrcAmount(amountInSourceCurrency);
+                    setDisplayTargetAmount(response.data.toFixed(2));
+                    //setDisplayToCurrency(targetCurrency);
+
+                    setShowResult(true)
+    
+                }else{
+                    console.log("You entered data is wrong")
+                    setButtonText("Convert Currency")
+                    //setIconLoading(false)
+                    setIsloading(false)
+                    
+                }
+
+             }).catch((err) => {
+                console.error(err);
+          
+                // Handle error response from the server
+                // The request encountered an error
+                console.log("Request encountered an error");
+          
+                // ... other error handling code ...
+              });
+
+            
+            
+            
         
               
      
@@ -171,122 +228,186 @@ export default function MainPage() {
                 console.error("Error during request setup:", err.message);
               }
             }
-        
-        
- 
+
     }
-    //Get currency names from api
-    // useEffect(() => {
-    //     const getCurrencyNames = async() =>{
-    //         try{
-    //             const response = await axios.get("http://localhost:5000/getAllCurrencies");
-    //             setCurrencyNames(response.data)
-    //            console.log(response.data)
-    //         }catch(err){
-    //             console.error(err);
-    //         }
-    //     }
-    //     getCurrencyNames().then(r => {});
-    // }, [])
 
-    const fetchData = (value, field) => {
-        setIsLoadingResults(true); 
-         //fetch("http://localhost:4000/getAllCurrencies")
-        //fetch("https://rate-rocket.onrender.com/getAllCurrencies")
-        fetch("https://rate-rocket-api.vercel.app/getAllCurrencies")
-            .then((response) => response.json())
-            .then((json) => {
-                // Convert the object to an array of key-value pairs
-                const currenciesArray = Object.entries(json);
 
-                // Filter the array based on the currency name and code (value)
-                const result = currenciesArray.filter(([currencyCode, currencyName]) => {
-                    //console.log(`currencyCodes ${currencyCode}`)
-                 
-                    return (value && currencyName.toLowerCase().includes(value.toLowerCase())  || value && currencyCode.toLowerCase().includes(value.toLowerCase()));
-                });
+    
 
-      
+    const [currencies, setCurrencies] = useState([]);
+    //to be removed
+    //const [loading, setLoading] = useState(true);
+    //const [searchTerm, setSearchTerm] = useState("");
 
-                //console.log(result)
+    useEffect(()=>{
+        const fetchCurrencies = async ()=>{
+            try{
+                const response =await axios.get('https://rate-rocket-api.vercel.app/getAllCurrencies');
 
-                if(field === "src"){
-                    setSourceSearchResult(result)
-                    //setDisplayFromCurrency(result);
+     
+                // Extract currency data from the response
+                    const currencyData = Object.entries(response.data).map(([code, name]) => ({
+                        code,
+                        name,
+                      //  img: `https://flagsapi.com/${code.slice(0, -1).toUpperCase()}/flat/32.png`,
+                        imgURL:`https://flagcdn.com/w40/${code.slice(0,-1).toLowerCase()}.webp`
+                    }));
+
                     
-                    //console.log("source result 196: "+ result);
-                }
-                else if (field === "target"){
-                    setTargetSearchResult(result)
-                    //setDisplayToCurrency(result);
-              
-                }
+
+                    setCurrencies(currencyData);
+                    //console.log(currencyData)
+
+                  
+                    
+            }catch(error){
+                    console.log(error);
+
+            }finally{
+                //setLoading(false);
+            }
+        }
+     
+
+        fetchCurrencies();
 
 
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-
-            }).finally(() => {
-                setIsLoadingResults(false); // Set loading to false when data fetching is complete
-              });
-    };
+    },[])
 
 
 
-
-    const handleChange = (value, src) =>{
-        if(src === "source"){
-            //console.log("source:"+ value)
-            setSourceInput(value)
-            fetchData(value,"src")
+    //to be removed
+    // const handleChange = (value, src) =>{
+    //     if(src === "source"){
+    //         //console.log("source:"+ value)
+    //         setSourceInput(value)
+    //         fetchData(value,"src")
       
-        }
-        else if(src === "target"){
-            //console.log("target:"+ value)
-            setTargetInput(value)
-            fetchData(value,"target")
-        }
-
-
-    }
+    //     }
+    //     else if(src === "target"){
+    //         //console.log("target:"+ value)
+    //         setTargetInput(value)
+    //         fetchData(value,"target")
+    //     }
+    // }
 
     const handleClear = (field) => {
-        if (field === 'source') {
-          setSourceInput('');
-          
-          if (sourceInputRef.current) {
+
+        if(field === "src"){
+            setSourceCurrency("");
+            //setSourceInput("");
+            setSourceKey(Math.random());
+
+            if(sourceInputRef.current){
+                sourceInputRef.current.focus();
+                //console.log("Focusing sourceInputRef");
+            }else{
+                //console.log("sourcetInputRef not avaliable");
+            }
+        }
+        
+        else if(field === "target"){
+            //setTargetInput("");
+            setTargetCurrency("");
+            setTargetKey(Math.random());
+
+            if (targetInputRef.current ) {
+                targetInputRef.current.focus();
+                //console.log("Focusing targetInputRef");
+            }else{
+                //console.log("targetInputRef not avaliable");
+            }
       
-            sourceInputRef.current.focus();
+
+       }else if (field === 'sourceAmount') {
+
+          setAmountInSourceCurrency('');
+          if (sourceAmountRef.current) {
+            sourceAmountRef.current.focus();
           }
-        } else if (field === 'target') {
-          setTargetInput('');
-          if (targetInputRef.current) {
-            targetInputRef.current.focus();
-          }
+        }
+      };
+
+      const handleInputValueChange = (event, field) => {
+
+        if(field === 'src') {
+            const value = event.target.value;
+                if (value === '') {
+                    setSourceCurrency("")
+                    setSourceKey(Math.random());
+            
+                }
+        }
+
+        if(field === 'target') {
+            const value = event.target.value;
+                if (value === '') {
+                    
+                    setTargetCurrency("")
+
+                    setTargetKey(Math.random());
+            
+                }
         }
       };
 
     const handleButtonClick = () => {
-       // setDisplaySrcAmount(amountInSourceCurrency)
-       // setDisplayFromCurrency(currencyNames[sourceCurrency])
-       // setDisplayTargetAmount(amountInTargetCurrency.toFixed(2))
-       // setDisplayToCurrency(currencyNames[targetCurrency])
+      
 
-        // setDisplaySrcAmount(amountInSourceCurrency)
-        // setDisplayFromCurrency(sourceCurrency)
-        // setDisplayTargetAmount(amountInTargetCurrency)
-        // setDisplayToCurrency(targetCurrency)
-
-        setDisplaySrcAmount(amountInSourceCurrency)
-        setDisplayFromCurrency(sourceInput)
+        const currencyNameRegex = /^(.*?)\s?\((.*?)\)$/;  
+        //setDisplayFromCurrency(sourceInput)
         setDisplayTargetAmount(amountInTargetCurrency)
-        setDisplayToCurrency(targetInput)
+        //setDisplayToCurrency(targetInput)
 
 
+         //Setting source currency name display
+         if(sourceCurrency !== "" && targetCurrency !== ""){
+
+
+            const seperatedSrcCurrencyName = completeSrcCurrencyName.match(currencyNameRegex);
+            const displaySrcCurrencyName = seperatedSrcCurrencyName ? seperatedSrcCurrencyName[1].trim() : null;
+            setDisplayFromCurrency(displaySrcCurrencyName)
+
+            //Setting target currency name display
+            const seperatedTargetCurrencyName = completeTargetCurrencyName.match(currencyNameRegex);
+            const displayTargetCurrencyName = seperatedTargetCurrencyName ? seperatedTargetCurrencyName[1].trim() : null;
+            setDisplayToCurrency(displayTargetCurrencyName)
+
+
+
+         }
+            //Don't display if any of input fields is empty
+         if(sourceCurrency === "" || targetCurrency === "" || amountInSourceCurrency ==="" || displaySrcAmount < 0){
+            setShowResult(false)
+         }
       };
 
+
+      const handleAutoCompleteChange = (value, inputType) => {
+        //setSearchTerm(value);
+        const currencyCodeRegex = /\(([^)]+)\)/;
+
+        if(inputType ==="src"){
+
+        
+            const match = value.match(currencyCodeRegex);
+            const currencyCode = match ? match[1] : null;
+            setSourceCurrency(currencyCode)
+            setCompleteSrcCurrencyName(value) // store full src name    
+        }if(inputType ==="target"){
+           
+            const match = value.match(currencyCodeRegex);
+            const currencyCode = match ? match[1] : null;
+            setTargetCurrency(currencyCode)
+
+            setCompleteTargetCurrencyName(value) // store full target name 
+        }
+        
+      };
+
+    
     return (
+        
         
         <div className=" mt-6  relative ">
         
@@ -295,103 +416,305 @@ export default function MainPage() {
 
             {/* Form Area */}
             <div className="mt-5  flex items-center justify-center flex-col ">
-                <section className='w-full lg:w-1/2'>
+                <section className='w-full lg:w-1/2 '>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
-                            <label
-                                htmlFor={date}
-                                className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">Date: </label>
+                            <label htmlFor={date} className="block mb-2 text-sm font-medium  ">Date: </label>
 
-                            <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} min={"1999-01-04"} max={getTodayDate()}
+                                    <Input  onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} 
+               
+                                                id={date}
+                                                name={date}
+                                                placeholder="Select Date and Time"
+                                                size="lg"
+                                                type="date"
+                                                max={getTodayDate()}
+                                                min={"1999-01-04"}
+                                                defaultValue={getTodayDate()}
+                                                variant="filled"
+                                                focusBorderColor="green.300"
+                                                borderWidth={0.1}
+                                                required
+                                                    
+                                                />
+
+                            {/* <input onChange={date? (e)=>setDate(e.target.value):setDate(getTodayDate())} type="date" id={date} name={date} min={"1999-01-04"} max={getTodayDate()}
                             defaultValue={getTodayDate()}
                              style={{ appearance: "none"  }} // Add the appearance property here
-                            className="bg-gray-50 border col border-gray-300  text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  text-black dark:text-green-400 font-medium dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required />
+                            className="bg-gray-50 border col border-gray-300  text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  text-black dark:text-green-400 font-medium dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Date" required /> */}
                         </div>
                         {/*Source Currency*/}
                         <div className="mb-4 relative">
-                            <label htmlFor={sourceCurrency} className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">
+                            <label htmlFor={sourceCurrency} className="block mb-2 text-sm font-medium dark:gray-500">
                                 Source Currency:
                             </label>
                             <div className="relative">
-                                <input
-                                ref={sourceInputRef}
-                                    required
+
+                                {/* <Input
+                               
+                                    ref={sourceInputRef}
                                     id={sourceCurrency}
                                     name={sourceCurrency}
                                     value={sourceInput}
+                                    required
                                     onChange={(e) => handleChange(e.target.value, "source")}
                                     type="text"
-                                    placeholder="Type source currency name: "
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 e dark:focus:ring-green-500 dark:focus:border-green-500 pr-10" // Add pr-10 for padding-right to accommodate the close icon
-                                />
-                                {sourceInput && ( // Render the close icon only when sourceInput is not empty
-                                    <IoIosClose
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
-                                        onClick={() => handleClear("source")} // Clear the sourceInput when the close icon is clicked
-                                    />
-                                )}
+                    
+                                    variant="filled"
+                                    colorScheme={"teal"}
+                                    placeholder="Country Name or Code"
+                                    size="lg"
+                                    fontSize={14}
+                                    focusBorderColor="green.300"
+                                    borderWidth={0.1}
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}
+                                /> */}
+
+
+                                <Stack direction="column">
+                                    {/* <Text>Basic </Text> */}
+                                    <AutoComplete   rollNavigation key={sourceKey}   onChange={(e) => {handleAutoCompleteChange(e,"src")}} variant="filled" >
+                                    <InputGroup>
+
+                                    <AutoCompleteInput   onChange={(e)=>handleInputValueChange(e,"src")} ref={sourceInputRef}  variant="filled" size="lg" placeholder="Country Name or Code" fontSize={14}
+                                    focusBorderColor="green.300"
+                                    borderWidth={1}
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }} autoFocus  required/>
+
+
+                                     {sourceCurrency  && (
+                                            <InputRightElement>
+                                            <IconButton
+                                            className='  top-1 right-2'
+                                                variant='none'
+                                                colorScheme='teal'
+                                                aria-label='clear source currency'
+                                                color={"teal"}
+                                                fontSize={"10"}
+                                                icon={<CloseIcon />}
+                                                onClick={() =>handleClear("src")} 
+                                                />
+                                                {/* <CloseIcon
+                                                color={"teal"}
+                                                w={2.5}
+                                                h={2.5}
+                                                
+                                                className="text-[25px] hover:cursor-pointer"
+                                                onClick={handleClearInput} // Clear the sourceInput when the close icon is clicked
+                                                /> */}
+                                            </InputRightElement>
+                                            )}
+
+                                    </InputGroup>
+                                    
+
+                                    
+                                    <AutoCompleteList >
+                                        {currencies.map((currency) => (
+                                        <AutoCompleteItem
+                                            key={currency.code}
+                                            value={`${currency.name} (${currency.code})`}
+                                            label={`${currency.name} (${currency.code})`}
+                                        
+                                            textTransform="capitalize"
+                                        >
+                                          
+                                            <Image
+                                            src={currency.imgURL}
+                                            fallbackSrc='https://via.placeholder.com/32'
+                                            onError={(e) => {
+                                                e.preventDefault();
+                                                e.target.src = 'https://via.placeholder.com/32'; // Use a fallback image on error
+                                                e.target.onerror = null;
+                                            }}
+                                        />
+
+                                            <Text  ml="4">{currency.name} ({currency.code})</Text>
+                                        </AutoCompleteItem>
+                                        ))}
+                                    </AutoCompleteList>
+                                    </AutoComplete>
+                                </Stack>    
+
                             </div>
                         </div>
 
 
-                        <Results sourceInput = {sourceInput} sourceSearchResult={sourceSearchResult}  setSourceInput ={setSourceInput} target={false} setSourceCurrency={setSourceCurrency} isLoadingResults={isLoadingResults}/>
+                        {/* <Results sourceInput = {sourceInput} sourceSearchResult={sourceSearchResult}  setSourceInput ={setSourceInput} target={false} setSourceCurrency={setSourceCurrency} isLoadingResults={isLoadingResults}/> */}
 
                             {/*target Currency*/}
 
                         <div className="mb-4 relative">
-                            <label htmlFor={targetCurrency} className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">
+                            <label htmlFor={targetCurrency} className="block mb-2 text-sm font-medium  dark:gray-500">
                                 Target Currency:
                             </label>
                             <div className="relative">
-                                <input
+                            
+
+                                {/* <Input
+                                   required
                                     ref={targetInputRef}
-                                    required
                                     id={targetCurrency}
                                     name={targetCurrency}
                                     value={targetInput}
                                     onChange={(e) => handleChange(e.target.value, "target")}
                                     type="text"
-                                    placeholder="Type target currency name: "
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 e dark:focus:ring-green-500 dark:focus:border-green-500 pr-10" // Add pr-10 for padding-right to accommodate the close icon
-                                />
-                                {targetInput && ( // Render the close icon only when targetInput is not empty
-                                    <IoIosClose
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[25px] text-black dark:text-white hover:cursor-pointer"
-                                        onClick={() => handleClear("target")} // Clear the targetInput when the close icon is clicked
-                                    />
-                                )}
+                                    variant="filled"
+                                    colorScheme={"teal"}
+                                    placeholder="Country Name or Code"
+                                    size="lg"
+                                    fontSize={14}
+                                    focusBorderColor="green.300"
+                                    borderWidth={0.1}
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}
+                                /> */}
+
+                                <Stack direction="column">
+                                    {/* <Text>Basic </Text> */}
+                                    <AutoComplete    key={targetKey} rollNavigation onChange={(e) => {handleAutoCompleteChange(e,"target")}} variant="filled" >
+                                    <InputGroup  >
+                                    <AutoCompleteInput   onChange={(e)=>handleInputValueChange(e,"target")} ref={targetInputRef} variant="filled" size="lg" placeholder="Country Name or Code"  fontSize={14}
+                                    focusBorderColor="green.300"
+                                    borderWidth={1}
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}  required autoFocus={targetInputRef.current} />
+
+                                    {targetCurrency  && (
+                                            <InputRightElement>
+                                            <IconButton
+                                            className='  top-1 right-2'
+                                                variant='none'
+                                                colorScheme='teal'
+                                                aria-label="clear target currency"
+                                                color={"teal"}
+                                                fontSize={"10"}
+                                                icon={<CloseIcon />}
+                                                onClick={ ()=>handleClear("target")} 
+                                                />
+                                                
+                                            </InputRightElement>
+                                            )}
+                                    </InputGroup>
+
+                                
+                                    <AutoCompleteList>
+                                        {currencies.map((currency) => (
+                                        <AutoCompleteItem
+                                            key={currency.code}
+                                            value={`${currency.name} (${currency.code})`}
+                                            label={`${currency.name} (${currency.code})`}
+                                        
+                                            textTransform="capitalize"
+                                        >
+                                            
+                                            <Image
+                                            src={currency.imgURL}
+                                            fallbackSrc='https://via.placeholder.com/32'
+                                            onError={(e) => {
+                                                e.preventDefault();
+                                                e.target.src = 'https://via.placeholder.com/32'; // Use a fallback image on error
+                                                e.target.onerror = null;
+                                            }}
+                                        />
+
+                                            <Text  ml="4">{currency.name} ({currency.code})</Text>
+                                        </AutoCompleteItem>
+                                        ))}
+                                    </AutoCompleteList>
+                                    </AutoComplete>
+                                </Stack>
+
+                
                             </div>
                         </div>
 
-                        <Results targetInput = {targetInput} targetSearchResult={targetSearchResult} setTargetSearchResult={setTargetSearchResult} setTargetInput ={setTargetInput} target={true} setTargetCurrency={setTargetCurrency} isLoadingResults={isLoadingResults}/>
+                        {/* <Results targetInput = {targetInput} targetSearchResult={targetSearchResult} setTargetSearchResult={setTargetSearchResult} setTargetInput ={setTargetInput} target={true} setTargetCurrency={setTargetCurrency} isLoadingResults={isLoadingResults}/> */}
 
-                        <div className="mb-4">
+                        <div className=" relative mb-4">
                             <label
                                 htmlFor={amountInSourceCurrency}
                                 name={amountInSourceCurrency}
-                                className="block mb-2 text-sm font-medium text-gray-600 dark:text-white">Amount in Source Currency:</label>
+                                className="block mb-2 text-sm font-medium "> Amount in Source Currency:</label>
 
-                            <input onChange={(e)=>setAmountInSourceCurrency(e.target.value)} type="number" min={1} id={amountInSourceCurrency}
+                                <div className=' relative'>
+                                <InputGroup>
+                                <Input
+                                   required
+                                    ref={sourceAmountRef}
+                                    id={amountInSourceCurrency}
+                                    name={amountInSourceCurrency}
+                                     value={amountInSourceCurrency}
+                                    onChange={(e)=>setAmountInSourceCurrency(e.target.value)}
+                                    type="number"
+                                    min={1}
+                                    focusBorderColor="green.300"
+                                    borderWidth={1}
+                                    variant="filled"
+                                    colorScheme={"teal"}
+                                    placeholder="Example: 250"
+                                    size="lg"
+                                    fontSize={14}
+                                    _placeholder={{ opacity: 0.6, color: "gray.600", fontSize:15 }}
+                                />
+
+                                <InputRightElement>
+
+                                
+                                {amountInSourceCurrency && ( // Render the close icon only when targetInput is not empty
+                                <IconButton
+
+                                        className='  top-1 right-2'
+                                        variant='none'
+                                        colorScheme='teal'
+                                        aria-label='clear target Amount'
+                                        color={"teal"}
+                                        fontSize={"10"}
+                                        icon={<CloseIcon />}
+                                        onClick={() => handleClear("sourceAmount")} // Clear the targetInput when the close icon is clicked
+                                
+                                >
+                                    </IconButton>
+                                )}
+                                
+                                </InputRightElement>
+
+                                </InputGroup>
+
+                                
+                                </div>
+
+                            {/* <input onChange={(e)=>setAmountInSourceCurrency(e.target.value)} type="number" min={1} id={amountInSourceCurrency}
                             name={amountInSourceCurrency}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Example: 250" required />
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Example: 250" required /> */}
                         </div>
 
                         
-                        <button onClick={handleButtonClick} className='bg-green-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-700 hover:cursor-pointer'>{buttonText} {iconLoading ? <RotateIcon isloading={isloading}></RotateIcon>: ""}</button>
+                        {/* <button onClick={handleButtonClick} className='bg-green-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-700 hover:cursor-pointer'>{buttonText} {iconLoading ? <RotateIcon isloading={isloading}></RotateIcon>: ""}</button> */}
+                        <Button
+                            type='submit'
+                            isLoading={isloading}
+                            loadingText="Converting.."
+                            colorScheme="whatsapp"
+                            spinnerPlacement="end"
+                            onClick={handleButtonClick}
+                            >
+                            {buttonText}
+                        </Button>
                 
 
                     </form>
                 </section>
             </div>
-            {/* Result */}
-            {!isloading ? (
-                <div className='  text-center py-5 mt-10  text-blue-950 dark:text-white  flex items-center justify-center'>
 
-                {showResult && (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "" && displaySrcAmount > 0)  ? 
+
+            {/* Result */}
+            {!isloading && showResult  ? (
+                <div className=' mb-28 md:mb-0   text-center py-5 mt-10    flex items-center justify-center'>
+
+                { (displaySrcAmount !== "" && displayFromCurrency !== "" && displayToCurrency !== "" && displaySrcAmount > 0 )  ? 
                 
                 <div className='block md:flex text-lg opacity-80 '>
                      <div className=' flex  mr-2'>
-                     <div className=' text-gray-700 dark:text-gray-200 text-[25px] md:text-[25px]'>{formatNumberWithComma(displaySrcAmount)}</div>
+                     <Box className='   text-[25px] md:text-[25px]'>{formatNumberWithComma(displaySrcAmount)}</Box>
                      <div className=' ml-1'>{`${displaySrcAmount > 1 ? displayFromCurrency +"s" : displayFromCurrency}`}</div>
                      </div> 
                   ＝  
@@ -419,10 +742,10 @@ export default function MainPage() {
             </div> */}
 
             {errorMessage && (
-  <div className="text-red-500 text-center py-2">
-    Error: {errorMessage}
-  </div>
-)}
+                <div className="text-red-500 text-center py-2">
+                    Error: {errorMessage}
+                </div>
+            )}
 
 
         </div>
